@@ -1,0 +1,37 @@
+# Example RDF (turtle) mapping file
+
+PREFIX javadoc: <com/sun/javadoc/>
+
+javadoc:AnnotationDesc 					rdfs:label "Represents an annotation."  .
+javadoc:AnnotationDesc.ElementValuePair rdfs:label "Represents an association between an annotation type element and one of its values." .
+javadoc:AnnotationTypeDoc				rdfs:label "Represents an annotation type." .
+javadoc:AnnotationTypeElementDoc		rdfs:label "Represents an element of an annotation type." .
+javadoc:AnnotationValue					rdfs:label "Represents a value of an annotation type element." .
+
+javadoc:ClassDoc  
+	rdfs:label "Represents a java class or interface and provides access to information about the class, the class's comment and tags, and the members of the class." .
+
+
+
+
+javadoc:ConstructorDoc 	               rdfs:label "Represents a constructor of a java class." .
+javadoc:Doc                             rdfs:label "Represents Java language constructs (package, class, constructor, method, field) which have comments and have been processed by this run of javadoc."  .
+javadoc:DocErrorReporter                rdfs:label "This interface provides error, warning and notice printing."  .
+javadoc:ExecutableMemberDoc             rdfs:label "Represents a method or constructor of a java class." .
+javadoc:FieldDoc 	                   rdfs:label "Represents a field in a java class."  .
+javadoc:MemberDoc 	                   rdfs:label "Represents a member of a java class: field, constructor, or method."  .
+javadoc:MethodDoc 	                   rdfs:label "Represents a method of a java class."  .
+javadoc:PackageDoc 	                   rdfs:label "Represents a java package."  .
+javadoc:Parameter                       rdfs:label "Parameter information."  .
+javadoc:ParameterizedType 	           rdfs:label "Represents an invocation of a generic class or interface."  .
+javadoc:ParamTag 	                   rdfs:label "Represents an @param documentation tag."  .
+javadoc:ProgramElementDoc 	           rdfs:label "Represents a java program element: class, interface, field, constructor, or method."  .
+javadoc:RootDoc 	                       rdfs:label "Represents the root of the program structure information for one run of javadoc."  .
+javadoc:SeeTag 	                       rdfs:label "Represents a user-defined cross-reference to related documentation."   .
+javadoc:SerialFieldTag 	               rdfs:label "Documents a Serializable field defined by an ObjectStreamField."  .
+javadoc:SourcePosition 	               rdfs:label "This interface describes a source position: filename, line number, and column number."  .
+javadoc:Tag 	                           rdfs:label "Represents a simple documentation tag, such as @since, @author, @version."  .
+javadoc:ThrowsTag 	                   rdfs:label "Represents a @throws or @exception documentation tag."  .
+javadoc:Type 	                       rdfs:label "Represents a type."  .
+javadoc:TypeVariable 	               rdfs:label "Represents a type variable."  .
+javadoc:WildcardType 	               rdfs:label "Represents a wildcard type argument."  .

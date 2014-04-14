@@ -1,0 +1,23 @@
+@prefix : <http://www.interition.net/java/ref/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . 
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+
+
+:Class rdf:type rdfs:Class .
+:Interface rdf:type rdfs:Interface .
+
+:name rdf:type rdf:Property .
+:package rdf:type rdf:Property .
+:constructor rdf:type rdf:Property .
+:method rdf:type rdf:Property .
+:parameter rdf:type rdf:Property .
+:parameterType rdf:type rdf:Property .
+:parameterBound rdf:type rdf:Property .
+:extends rdf:type rdf:Property .
+:returns rdf:type rdf:Property .
+:field rdf:type rdf:Property .
+:isAbstract rdf:type rdf:Property .
+
+
+

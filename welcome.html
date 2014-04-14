@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>www.sparqlycode.com - sparqly clean code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+#form {
+	  width: 700px ;
+	  margin-left: auto ;
+	  margin-right: auto ;
+	}
+#logo {
+	  width: 700px ;
+	  margin-left: auto ;
+	  margin-right: auto ;
+	}
+#footer {
+	  width: 700px ;
+	  margin-left: auto ;
+	  margin-right: auto ;
+	}
+</style>
+<body>
+<div id="logo">
+<img alt="" src="/sparqlycode-logo.jpg">
+</div>
+<div id="form">
+	<h1>Login</h1>
+	<form method="POST" action="j_security_check">
+           Username: <input type="text"     name="j_username"><br />
+           Password: <input type="password" name="j_password"><br />
+          <br />
+         <input type="submit" value="Login">
+        </form>
+</div>
+<code>
+#All the Classes
+prefix java: <http://www.interition.net/java/ref/>
+prefix sc:   <http://www.sparqlycode.com/id/>
+
+SELECT * { 
+	?s a java:Class .
+	} LIMIT 100
+</code>
+
+<pre>
+#What return types are available on a Classes methods?
+
+prefix java: <http://www.interition.net/java/ref/>
+prefix sc:   <http://www.sparqlycode.com/id/>
+
+SELECT ?method ?type { 
+   <http://www.sparqlycode.com/id/org.openrdf.sail.config.SailConfigUtil>
+      java:method ?method . 
+      ?method java:returns ?type .
+} LIMIT 100
+</pre>
+<pre>
+
+# What methods are there on the parameter types used by a Classes methods?
+
+prefix java: <http://www.interition.net/java/ref/>
+prefix sc:   <http://www.sparqlycode.com/id/>
+
+SELECT ?method ?methodsDependencies {
+   <http://www.sparqlycode.com/id/org.openrdf.sail.config.SailConfigUtil>
+ java:method ?method .
+    ?method java:parameter/java:type/java:method ?methodsDependencies .
+} LIMIT 100
+
+</pre>
+</body>
+</html>
