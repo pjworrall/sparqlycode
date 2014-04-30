@@ -35,6 +35,8 @@ To generate a Sparqlycode RDF Knowledge Base for a Maven based project add the f
 				<configuration>
 					<doclet>net.interition.sparqlycode.doclet.RdfDoclet</doclet>
 					<docletPath>${sparqlycode.lib}/sparqlycode-maven-plugin.jar:${sparqlycode.lib}/jena-core-2.11.1.jar:${sparqlycode.lib}/jena-arq-2.11.1.jar:${sparqlycode.lib}/jena-iri-1.0.1.jar:${sparqlycode.lib}/slf4j-log4j12-1.6.4.jar:${sparqlycode.lib}/jcl-over-slf4j-1.6.4.jar:${sparqlycode.lib}/slf4j-api-1.6.4.jar:${sparqlycode.lib}/log4j-1.2.16.jar:${sparqlycode.lib}/xml-apis-1.4.01.jar:${sparqlycode.lib}/xercesImpl-2.11.0.jar</docletPath>
+					<!-- this does not work for some reason... -->
+					<!-- <docletPath>${sparqlycode.lib}/*</docletPath> -->
 					<javadocVersion>1.7</javadocVersion>
 					<useStandardDocletOptions>false</useStandardDocletOptions>
 					<detail>true</detail>
@@ -51,5 +53,24 @@ To generate a Sparqlycode RDF Knowledge Base for a Maven based project add the f
 			</plugin>
 		</plugins>
 	</build>
+	
+	Usage FAQ
+	
+	Always build a source true with mvn install to check validity of build (skip tests - see below)
+	
+	To generate just the sparqlycode use javadoc:javadoc
+	
+	Best practice is to use a duplicate of the pom.xml named scpom.xml and use mvn -f to refer to it.
+	
+	Enable mvn debug option -X
+	
+	Disable tests with -Dmaven.test.skip=true
+	
+	Example command: mvn -X -Dmaven.test.skip=true -f scpom.xml javadoc:javadoc
+	
+	scpom.xml can have all configuration removed other than the dependencies for the project and the above javadoc plugin decleration.
+	
+	run jena riot on the resulting sparqlycode.n3 out file to check it is a valid format
+	
 	
 	
