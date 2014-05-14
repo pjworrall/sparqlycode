@@ -1,0 +1,30 @@
+SPARQLYCODE (C) 2014- Paul Worrall, Interition Ltd, All Rights Reserved
+
+SPARQLYCODE enables querying and linking of software artifacts, code, dependencies, build, configuration and source code management data using SPARQL.
+
+LICENSE
+
+Written by Paul Worrall
+Copyright (c) 2014 Interition Limited, England.
+All rights reserved.
+
+Permission to use and distribute the binary version of this software
+and its documentation is freely granted by Interition Limited provided that
+the copyright notice above and the following warranty disclaimer are presented
+in human readable form.
+
+You may not reverse engineer, decompile, disassemble, modify, translate,
+make any attempt to discover the source code of the Software.
+
+Because this software is licensed free of charge, it is provided "AS IS",
+with NO WARRANTY. TO THE EXTENT PERMITTED BY LAW, Interition Limited England
+DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ITS 
+PERFORMANCE, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+Interition Limited England WILL NOT BE LIABLE FOR ANY DAMAGES WHATSOEVER ARISING
+OUT OF THE USE OF OR INABILITY TO USE THIS SOFTWARE, INCLUDING BUT NOT LIMITED
+TO DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, PUNITIVE, AND EXEMPLARY DAMAGES, EVEN IF
+ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+THIRD PARTY LICENSES
+
+Third party dependencies and their licenses are described in lib/readme.html .
