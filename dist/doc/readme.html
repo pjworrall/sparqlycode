@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html><head>
+	<title>Sparqlycode Operation Guide - Codeleaks</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="DC.Title" content="Sparqlycode Operation Guide - Codeleaks">
+
+	<meta name="description" content="wiki for Codeleaks product set - Eg SPARQLYCODE">
+
+
+	<link rel="start" title="Codeleaks" href="http://www.interition.net:1966/interwiki/codeleaks/Codeleaks">
+	<link rel="home" title="Codeleaks" href="http://www.interition.net:1966/interwiki/codeleaks/Codeleaks">
+
+	<link href="readme_files/jamwiki.css" type="text/css" rel="stylesheet">
+</head>
+<body style="background:none">
+
+<h1 id="contents-header">Sparqlycode Operation Guide</h1>
+
+
+
+
+	
+		
+			<div id="content-article">
+			
+			
+			
+			<table id="toc">
+<tbody><tr>
+<th>Contents <span class="toctoggle hidden" id="toggle-link-wrapper">[<a id="toggle-link" href="#">hide</a>]</span></th>
+</tr>
+<tr>
+<td id="toc-content">
+<ul>
+<li><a href="#Basic_Installation"><span class="tocnumber">1</span> <span class="toctext">Basic Installation</span></a></li>
+<li><a href="#Producing_Sparqlycode_RDF_for_a_source_distribution"><span class="tocnumber">2</span> <span class="toctext">Producing Sparqlycode RDF for a source distribution</span></a><ul>
+<li><a href="#Maven_Project_Object_Modal_.28POM.29_as_RDF"><span class="tocnumber">2.1</span> <span class="toctext">Maven Project Object Modal (POM) as RDF</span></a></li>
+<li><a href="#Java_code_as_RDF"><span class="tocnumber">2.2</span> <span class="toctext">Java code as RDF</span></a></li>
+</ul></li>
+</ul>
+</td>
+</tr>
+</tbody></table>
+<script type="text/javascript">
+JAMWiki.UI.removeClass(document.getElementById("toggle-link-wrapper"), "hidden");
+JAMWiki.UI.initializeTocToggle("hide", "show");
+</script>
+<h2><span id="Basic_Installation">Basic Installation</span></h2>
+<p>The Sparqlycode runtime distribution is provided in a zip file. Check
+ the zip file signature is correct before unpacking.  When unpacked the 
+zip file will have the following folders:</p>
+<ul>
+<li>bin - there will be shell and XSLT scripts here for carrying out various tasks</li>
+<li>etc - configuration files are kept here</li>
+<li>jdk - if you want to isolate the Java SDK you use for running SPARQLYCODE it should be run here</li>
+<li>lib - the jar file for the sparqlycode runtime will be found here along with any dependencies</li>
+<li>rdf - any RDF files can be placed here for reference</li>
+<li>sources - the original source code for projects that are to be converted into a sparqlycode KB are saved here</li>
+</ul>
+<p><br>
+You should set an environment variable called SPARQLYCODE_HOME that refers to the root folder of the distribution.</p>
+<p>You should add $SPARQLYCODE_HOME/bin to your shell PATH</p>
+<p>You should set the JAVA_HOME environment variable to the $SPARQLYCODE_HOME/jdk or to your preferred JDK location</p>
+<p>Set all the shell scripts executable in $SPARQLYCODE_HOME/bin</p>
+<p>You need a version of SaxonHE 9 installed (<a class="externallink" rel="nofollow" href="http://saxon.sourceforge.net/">http://saxon.sourceforge.net/</a>). Set a SAXON_HOME environment variable to refer to the root folder of the Saxon distribution.</p>
+<p>The following is also recommended for the shell where sparqlycode will be run:</p>
+<p><br>
+MAVEN_OPTS=-Xmx1024M -XX:PermSize=512m -XX:MaxPermSize=1024m 
+-Djava.awt.headless=true -XX:+CMSClassUnloadingEnabled 
+-XX:+UseConcMarkSweepGC JAVA_OPTS=-Xmx1024M -XX:PermSize=1024m</p>
+<p>If you have Apache Jena it will also be useful to have JENA_HOME set 
+to the root of the Jena distribution and their bin folder on your search
+ path.</p>
+<p><br></p>
+<h2><span id="Producing_Sparqlycode_RDF_for_a_source_distribution">Producing Sparqlycode RDF for a source distribution</span></h2>
+<p>This version of Sparqlycode only supports a Maven build of a Java 
+project.  It also does not support multi module projects so conversion 
+should be run at the child project level. The RDF model only represents a
+ limited number of concepts from Java and Maven in this version.  As an 
+additional prerequisite you must have Maven 3.0 or above installed (It 
+has been built and test on Maven 3.2.1).</p>
+<p>We also only give instructions for unix variants.  Microsoft users will have to determine the equivalent in their environment.</p>
+<h3><span id="Maven_Project_Object_Modal_.28POM.29_as_RDF">Maven Project Object Modal (POM) as RDF</span></h3>
+<p>Check that pom2rdf is on your shell search path:</p>
+<p><code>% which pom2rdf</code></p>
+<p>If there is no response recheck your installation.</p>
+<p>Create an <u>RDF serialized version of the Maven pom</u>. You need to
+ provide a base URI and we recommend using the URL to the POM.XML in the
+ source code control system. As an example for the AMQP module in Active
+ MQ 5.9.1 :</p>
+<p><code>% pom2rdf '<a class="externallink" rel="nofollow" href="https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob;f=activemq-amqp/pom.xml;h=77d41ec9a082fb044b9b913bea689dc261b3d042;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d">https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob;f=activemq-amqp/pom.xml;h=77d41ec9a082fb044b9b913bea689dc261b3d042;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d</a>'</code></p>
+<p>Note: Uri like this look prone to error but the tools coming in 
+sparqlycode will remove the need for manual handling of such things.  Of
+ course using a real URL like this for a URI will make the resulting RDF
+ far more useful.</p>
+<p><br></p>
+<h3><span id="Java_code_as_RDF">Java code as RDF</span></h3>
+<p>Check that pom4sparqly is on your shell search path:</p>
+<p><code>% which pom4sparqly</code></p>
+<p>If there is no response recheck your installation.</p>
+<p>Change your working directory to the root of the Maven project you want to work with.</p>
+<p>Clean the build:</p>
+<p><code>% mvn clean</code></p>
+<p>Create the <u>Sparqlycode specific Maven pom</u>. You need to provide the root package of the projects source code: eg net.interition.sparqlycode</p>
+<p><code>% pom4sparqly org.apache.activemq</code></p>
+<p>There will now be a scpom.xml as well as the original pom.xml in the 
+root of the source code tree.  You now run Maven with this new pom file</p>
+<p><code>% mvn -Dmaven.test.skip=true -f scpom.xml javadoc:javadoc</code></p>
+<p>Note we disabled tests because they are not considered necessary when
+ producing sparqlycode RDF: in the same way that they are not necessary 
+when wanting to produce Java documentation.</p>
+<p>You should find a file called sparqlycode.ttl in 
+./target/site/apidocs . This is the RDF. You can now load that file of 
+triples into your triplestore of choice and query with SPARQL. See 
+www.sparqlycode.com for information on how to query the RDF.</p>
+<p><br></p>
+<hr>
+<p>Revision 921</p>
+<p><br></p>
+<p><br></p>
+			</div>
+			<div class="clear"></div>
+			
+		
+	
+	
+
+
+
+
+
+	
+
+
+	
+
+
+
+
+
+</body></html>
