@@ -21,6 +21,9 @@
         name="SUBPACKAGE"
         select="'net.interition.sparqlycode'"/>
     
+    <xsl:param
+        name="BASEURI"/>
+    
         <xsl:template match="@*|node()">
             <xsl:copy copy-namespaces="no">
                 <xsl:apply-templates />
@@ -60,7 +63,10 @@
                          <xsl:element name="failOnError">true</xsl:element>
                          <xsl:element name="debug">true</xsl:element>
                          <xsl:element name="show">private</xsl:element>
-                         <xsl:element name="additionalparam">-file sparqlycode</xsl:element>
+                         <xsl:element name="additionalparam">-file sparqlycode.ttl</xsl:element>
+                         <xsl:if test="not($BASEURI)">
+                             <xsl:element name="additionalparam">-baseuri <xsl:value-of select="$BASEURI"/></xsl:element>
+                         </xsl:if>
                          <xsl:element name="subpackages">${subpackage}</xsl:element>
                      </xsl:element>
                  </xsl:element>
