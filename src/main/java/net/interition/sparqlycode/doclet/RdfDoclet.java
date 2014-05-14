@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
@@ -18,16 +20,17 @@ import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 import com.sun.tools.doclets.internal.toolkit.Configuration;
 import com.sun.tools.doclets.internal.toolkit.util.ClassTree;
 
-
 public class RdfDoclet extends AbstractDoclet {
 
 	public ConfigurationImpl configuration;
 
 	protected static final String sparqlyCodeDomainPrefix = "http://www.interition.net/java/ref/";
 
-	private String codeBasePrefix = null;
-	
-	private String fileName = "rdfdoclet";
+	private static String baseUriDefault = "http://www.sparqlycode.com/id/";
+	private static String fileNameDefault = "sparqlycode.ttl";
+
+	private String baseUri = null;
+	private String fileName = null;
 
 	// create an empty Model
 	private Model model = ModelFactory.createDefaultModel();
@@ -43,27 +46,34 @@ public class RdfDoclet extends AbstractDoclet {
 		// to be a namespace plan for that first
 		// we cannot keep repeating the same prefix name for different uri
 		// domains
-		setCodeBasePrefix("http://www.sparqlycode.com/id/");
+		setBaseUri("http://www.sparqlycode.com/id/");
 	}
 
 	public static boolean start(RootDoc root) {
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
-			String fileName = readOptions(root.options());
+
+			Map<String, String> options = readOptions(root.options());
+			String fileName = (options.get("file") == null) ? RdfDoclet.fileNameDefault
+					: options.get("file");
 			doclet.setFileName(fileName);
+
+			String baseUri = (options.get("baseuri") == null) ? RdfDoclet.baseUriDefault
+					: options.get("baseuri");
+			doclet.setBaseUri(baseUri);
+
 			return doclet.start(doclet, root);
 
 		} finally {
 			ConfigurationImpl.reset();
 		}
-		
 
 	}
 
 	@Override
 	protected void generateClassFiles(ClassDoc[] arr, ClassTree classtree) {
-	
+
 		Arrays.sort(arr);
 		for (int i = 0; i < arr.length; i++) {
 			// skipping over things that are not wanted
@@ -73,7 +83,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 			ClassDoc curr = arr[i];
 
-			Resource classOrIntUri = model.createResource(codeBasePrefix
+			Resource classOrIntUri = model.createResource(baseUri
 					+ curr.qualifiedName().replace(".", "/"));
 
 			// check if class or interface. potential bug here is it is not
@@ -85,38 +95,36 @@ public class RdfDoclet extends AbstractDoclet {
 			if (curr.isInterface()) {
 				classOrIntUri.addProperty(RDF.type, JAVALANG.Interface);
 			}
-			 
 
 			// create basic metadata
 			classOrIntUri.addProperty(RDFS.label, curr.name());
 			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
-			classOrIntUri.addProperty(JAVALANG.Package, curr.containingPackage()
-					.name());
+			classOrIntUri.addProperty(JAVALANG.Package, curr
+					.containingPackage().name());
 
 			createConstructorRdf(classOrIntUri, curr);
 
 			createMethodsRdf(classOrIntUri, curr);
-			
-			// handle super classes
-            if(curr.superclass() != null) {
-            	Resource superClazz = model.createResource(codeBasePrefix
-    					+ curr.superclass().qualifiedName().replace(".", "/"));
-            	classOrIntUri.addProperty(JAVALANG.Extends,superClazz);
-            }
-            
-            // handle fields
-            for ( FieldDoc field : curr.fields()) {
-            	Resource fieldResource = model.createResource(codeBasePrefix
-    					+ field.qualifiedName().replace(".", "/"));
-            	classOrIntUri.addProperty(JAVALANG.Field,fieldResource);
-            }
-            
-         // add some simple attributes
-            if(curr.isAbstract() == true ) {            	
-            	classOrIntUri.addProperty(JAVALANG.IsAbsract,
-            			model.createTypedLiteral(true));
-            }
 
+			// handle super classes
+			if (curr.superclass() != null) {
+				Resource superClazz = model.createResource(baseUri
+						+ curr.superclass().qualifiedName().replace(".", "/"));
+				classOrIntUri.addProperty(JAVALANG.Extends, superClazz);
+			}
+
+			// handle fields
+			for (FieldDoc field : curr.fields()) {
+				Resource fieldResource = model.createResource(baseUri
+						+ field.qualifiedName().replace(".", "/"));
+				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
+			}
+
+			// add some simple attributes
+			if (curr.isAbstract() == true) {
+				classOrIntUri.addProperty(JAVALANG.IsAbsract,
+						model.createTypedLiteral(true));
+			}
 
 			writeRdf(model);
 
@@ -133,7 +141,7 @@ public class RdfDoclet extends AbstractDoclet {
 	private void createConstructorRdf(Resource classOrIntUri, ClassDoc curr) {
 		// handle the constructors
 		for (ConstructorDoc con : curr.constructors()) {
-			Resource methodUri = model.createResource(codeBasePrefix
+			Resource methodUri = model.createResource(baseUri
 					+ con.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Constructor, methodUri);
 
@@ -146,15 +154,17 @@ public class RdfDoclet extends AbstractDoclet {
 	private void createMethodsRdf(Resource classOrIntUri, ClassDoc curr) {
 		// handle the constructors
 		for (MethodDoc m : curr.methods()) {
-			Resource methodUri = model.createResource(codeBasePrefix
+			Resource methodUri = model.createResource(baseUri
 					+ m.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
 
 			parametersToRdf(m, methodUri);
-			
-			// parameterised return types need to be handled simularly to method parameters.
-			// need to apply here to - opportunity to generalise both services in handling parameterise types
-			Resource returnTypeUri = model.createResource(codeBasePrefix
+
+			// parameterised return types need to be handled simularly to method
+			// parameters.
+			// need to apply here to - opportunity to generalise both services
+			// in handling parameterise types
+			Resource returnTypeUri = model.createResource(baseUri
 					+ m.returnType().qualifiedTypeName().replace(".", "/"));
 			methodUri.addProperty(JAVALANG.Returns, returnTypeUri);
 
@@ -179,13 +189,15 @@ public class RdfDoclet extends AbstractDoclet {
 
 			switch (g.length) {
 			case 1:
-				methodUri.addProperty(JAVALANG.Parameter,
-						model.createResource().addProperty(JAVALANG.Name, p.name())
-								.addProperty(JAVALANG.ParameterType, g[0]));
+				methodUri.addProperty(JAVALANG.Parameter, model
+						.createResource().addProperty(JAVALANG.Name, p.name())
+						.addProperty(JAVALANG.ParameterType, g[0]));
 				break;
 			case 2:
-				methodUri.addProperty(JAVALANG.Parameter,
-						model.createResource().addProperty(JAVALANG.Name, p.name())
+				methodUri.addProperty(
+						JAVALANG.Parameter,
+						model.createResource()
+								.addProperty(JAVALANG.Name, p.name())
 								.addProperty(JAVALANG.ParameterType, g[0])
 								.addProperty(JAVALANG.ParameterBound, g[1]));
 				break;
@@ -204,7 +216,7 @@ public class RdfDoclet extends AbstractDoclet {
 		Resource[] r = null;
 
 		if (!p.type().toString().contains("<")) {
-			Resource pType = model.createResource(codeBasePrefix
+			Resource pType = model.createResource(baseUri
 					+ p.type().qualifiedTypeName().replace(".", "/"));
 			r = new Resource[1];
 			r[0] = pType;
@@ -215,84 +227,89 @@ public class RdfDoclet extends AbstractDoclet {
 			int close = p.typeName().indexOf('>');
 
 			r = new Resource[2];
-			r[0] = model.createResource(codeBasePrefix
+			r[0] = model.createResource(baseUri
 					+ p.typeName().substring(0, open).replace(".", "/"));
-			r[1] = model.createResource(codeBasePrefix
-					+ p.typeName().substring(open + 1, close).replace(".", "/"));
-			
+			r[1] = model
+					.createResource(baseUri
+							+ p.typeName().substring(open + 1, close)
+									.replace(".", "/"));
+
 		}
 
 		return r;
 
 	}
-	
+
 	private void writeRdf(Model model) {
 		try {
- 
-			File file = new File( getFileName() + ".n3");
- 
+
+			File file = new File(getFileName());
+
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}
- 
+
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
- 
-			model.write(bw, "N3");
+
+			model.write(bw, "TURTLE");
 			bw.close();
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Error writing out RDF to file " + getFileName() );
+			System.out
+					.println("Error writing out RDF to file " + getFileName());
 		}
 	}
-	
-    private static String readOptions(String[][] options) {
-        String fileName = null;
-        for (int i = 0; i < options.length; i++) {
-            String[] opt = options[i];
-            if (opt[0].equals("-file")) {
-                fileName = opt[1];
-            }
-        }
-        return fileName;
-    }
 
-    public static int optionLength(String option) {
-        if(option.equals("-file")) {
-            return 2;
-        }
-        return 0;
-    }
+	private static Map<String, String> readOptions(String[][] options) {
+		Map<String, String> optionValues = new HashMap<String, String>();
 
-    public static boolean validOptions(String options[][], 
-                                       DocErrorReporter reporter) {
-        boolean foundFileOption = false;
-        for (int i = 0; i < options.length; i++) {
-            String[] opt = options[i];
-            if (opt[0].equals("-file")) {
-                if (foundFileOption) {
-                    reporter.printError("Only one -file option allowed.");
-                    return false;
-                } else { 
-                    foundFileOption = true;
-                }
-            } 
-        }
-        if (!foundFileOption) {
-            reporter.printError("Usage: javadoc -file myfilename -doclet RdfDoclet ...");
-        }
-        return foundFileOption;
-    }
-
-	public String getCodeBasePrefix() {
-		return codeBasePrefix;
+		for (int i = 0; i < options.length; i++) {
+			String[] opt = options[i];
+			if (opt[0].equals("-file")) {
+				optionValues.put("file", opt[1]);
+			}
+			if (opt[0].equals("-baseuri")) {
+				optionValues.put("baseuri", opt[1]);
+			}
+		}
+		return optionValues;
 	}
 
-	public void setCodeBasePrefix(String codeBasePrefix) {
-        model.setNsPrefix( "", codeBasePrefix );
-		this.codeBasePrefix = codeBasePrefix;
+	public static int optionLength(String option) {
+		if (option.equals("-file")) {
+			return 2;
+		}
+		if (option.equals("-baseuri")) {
+			return 2;
+		}
+		return 0;
+	}
+
+	public static boolean validOptions(String options[][],
+			DocErrorReporter reporter) {
+		// it doesn't really matter if the options aren't provided as we have
+		// defaults but we keep the method
+		// as a template for the future.
+
+		boolean foundOptions = true;
+
+		if (!foundOptions) {
+			reporter.printError("Usage: javadoc -file myfilename -baseuri uri -doclet RdfDoclet ...");
+		}
+
+		return foundOptions;
+	}
+
+	public String getBaseUri() {
+		return baseUri;
+	}
+
+	public void setBaseUri(String baseUri) {
+		model.setNsPrefix("", baseUri);
+		this.baseUri = baseUri;
 	}
 
 	public String getFileName() {
