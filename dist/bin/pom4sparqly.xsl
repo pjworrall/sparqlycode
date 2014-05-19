@@ -17,12 +17,14 @@
     <xsl:param
         name="SPARQLYCODE_HOME"
         select="'/Users/pjworrall/Documents/sparqlycode'"/>
+    
     <xsl:param
         name="SUBPACKAGE"
         select="'net.interition.sparqlycode'"/>
     
     <xsl:param
-        name="BASEURI"/>
+        name="BASEURI"
+        select="'http://www.interition.net/sparqlycode/id/'"/>
     
         <xsl:template match="@*|node()">
             <xsl:copy copy-namespaces="no">
@@ -64,7 +66,7 @@
                          <xsl:element name="debug">true</xsl:element>
                          <xsl:element name="show">private</xsl:element>
                          <xsl:element name="additionalparam">-file sparqlycode.ttl</xsl:element>
-                         <xsl:if test="not($BASEURI)">
+                         <xsl:if test="$BASEURI">
                              <xsl:element name="additionalparam">-baseuri <xsl:value-of select="$BASEURI"/></xsl:element>
                          </xsl:if>
                          <xsl:element name="subpackages">${subpackage}</xsl:element>
