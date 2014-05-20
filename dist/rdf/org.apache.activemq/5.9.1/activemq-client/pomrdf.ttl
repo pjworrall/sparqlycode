@@ -1,0 +1,43 @@
+
+        
+        @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+        @prefix mvn: <http://www.interition.net/sparqlycode/maven/vocabulary/> .
+        @prefix isc: <http://www.interition.net/sparqlycode/vocabulary/> .
+        @prefix : <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob;f=activemq-client/pom.xml;h=2fc89846825d5722ee42f7eb398576a49279c31a;hb=04992929ddb84c78390e972a352fe45064d571d5> .
+        
+        :project rdf:type isc:MavenProject .
+        
+        :project mvn:parent :parent     .   
+        :parent mvn:groupId "org.apache.activemq" .     
+    :parent mvn:artifactId "activemq-parent" .     
+    :parent mvn:version "5.9.1" .     
+    :project mvn:dependency :dependency_1     .  
+        :dependency_1 mvn:groupId "org.slf4j" .     
+    :dependency_1 mvn:artifactId "slf4j-api" .     
+    :project mvn:dependency :dependency_2     .  
+        :dependency_2 mvn:groupId "org.apache.geronimo.specs" .     
+    :dependency_2 mvn:artifactId "geronimo-jms_1.1_spec" .     
+    :project mvn:dependency :dependency_3     .  
+        :dependency_3 mvn:groupId "org.fusesource.hawtbuf" .     
+    :dependency_3 mvn:artifactId "hawtbuf" .     
+    :dependency_3 mvn:version "${hawtbuf-version}" .     
+    :project mvn:dependency :dependency_4     .  
+        :dependency_4 mvn:groupId "org.apache.geronimo.specs" .     
+    :dependency_4 mvn:artifactId "geronimo-j2ee-management_1.1_spec" .     
+    :project mvn:dependency :dependency_5     .  
+        :dependency_5 mvn:groupId "commons-net" .     
+    :dependency_5 mvn:artifactId "commons-net" .     
+    :dependency_5 mvn:optional "true" .     
+    :project mvn:dependency :dependency_6     .  
+        :dependency_6 mvn:groupId "javax.jmdns" .     
+    :dependency_6 mvn:artifactId "jmdns" .     
+    :dependency_6 mvn:optional "true" .     
+    :project mvn:dependency :dependency_7     .  
+        :dependency_7 mvn:groupId "junit" .     
+    :dependency_7 mvn:artifactId "junit" .     
+    :dependency_7 mvn:scope "test" .     
+    :project mvn:dependency :dependency_8     .  
+        :dependency_8 mvn:groupId "org.slf4j" .     
+    :dependency_8 mvn:artifactId "slf4j-log4j12" .     
+    :dependency_8 mvn:scope "test" .     
+    

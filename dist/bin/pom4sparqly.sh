@@ -1,8 +1,12 @@
 #!/bin/sh
 
-#set -x
+# Copyright 2014, Paul Worrall , Interition Ltd.
 
-# Paul Worrall, Interition Limited, 2014
+# The BaseUri option has been disabled while waiting on a more strategic solution
+# It will default to a common Base Uri declared in the XSLT
+#  - http://www.interition.net:3030/browse/COD-96
+
+#set -x
 
 # this script creates a pom just for producing sparqlycode 
 
@@ -16,7 +20,8 @@ if [ -z "$SPARQLYCODE_HOME" ] ; then
    exit 1;
 fi
 
-USAGE="Usage: `basename $0` package BaseUri"
+#USAGE="Usage: `basename $0` package BaseUri"
+USAGE="Usage: `basename $0` package"
 
 if [ ! "$1" ] ; then
    echo You need to provide a java root package  . Eg net.interition.sparqlycode
@@ -24,13 +29,14 @@ if [ ! "$1" ] ; then
    exit 1;
 fi
 
-if [ ! "$2" ] ; then
-   echo You need to provide a BaseUri. Eg. the source code repository uri
-   echo $USAGE >&2
-   exit 1;
-fi
+#if [ ! "$2" ] ; then
+#   echo You need to provide a BaseUri. Eg. the source code repository uri
+#   echo $USAGE >&2
+#   exit 1;
+#fi
 
-export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1 BASEURI=$2"
+#export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1 BASEURI=$2"
+export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1"
 echo "\n"
 
 $JAVA_HOME/bin/java -jar $SAXON_HOME/saxon9he.jar -xsl:${SPARQLYCODE_HOME}/bin/pom4sparqly.xsl -s:pom.xml -o:scpom.xml $params 
