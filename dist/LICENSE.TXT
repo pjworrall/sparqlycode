@@ -9,9 +9,9 @@ Copyright (c) 2014 Interition Limited, England.
 All rights reserved.
 
 Permission to use and distribute the binary version of this software
-and its documentation is freely granted by Interition Limited provided that
-the copyright notice above and the following warranty disclaimer are presented
-in human readable form.
+and its documentation is freely granted by Interition Limited for educational purposes only
+provided that the copyright notice above and the following warranty disclaimer are
+presented in human readable form.
 
 You may not reverse engineer, decompile, disassemble, modify, translate,
 make any attempt to discover the source code of the Software.
