@@ -1,0 +1,17 @@
+# Example shell environment
+# Paul Worrall, May 2014
+export PATH=${PATH}:/home/username/apache-jena/apache-jena-2.11.0/bin
+export PATH=${PATH}:/opt/javacc/javacc/bin
+export PATH=${PATH}:/opt/pmd-bin-5.0.5/bin
+export PATH=${PATH}:/opt/apache-maven-3.2.1/bin
+export PATH=${PATH}:/home/username/sparqlycode/bin
+
+export SPARQLYCODE_HOME=/home/username/sparqlycode
+export JAVA_HOME=/opt/java
+export JENA_HOME=/opt/apache-jena/apache-jena-2.11.0
+
+export JAVA_OPTS='-Xmx1024M -XX:PermSize=1024m'
+export MAVEN_OPTS='-Xmx1024M -XX:PermSize=512m -XX:MaxPermSize=1024m -Djava.awt.headless=true -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC'
+
+export SAXON_HOME=/opt/SaxonHE9
+
