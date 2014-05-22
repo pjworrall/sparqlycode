@@ -16,7 +16,7 @@
     
     <xsl:param
         name="SPARQLYCODE_HOME"
-        select="'/Users/pjworrall/Documents/sparqlycode'"/>
+        select="'/home/username/sparqlycode'"/>
     
     <xsl:param
         name="SUBPACKAGE"
