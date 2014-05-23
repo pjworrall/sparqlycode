@@ -1,0 +1,14 @@
+# This tests if rdfs:labels on classes are coming back as expected
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
+ { 
+   ?class a java:Class ;
+       rdfs:label ?label .
+       
+         # put test in here and result should be nothing if ok or a boolean fail is not
+
+} LIMIT 100

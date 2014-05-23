@@ -41,12 +41,6 @@ public class RdfDoclet extends AbstractDoclet {
 
 	public RdfDoclet() {
 		configuration = (ConfigurationImpl) configuration();
-		// hard coded for testing but need to pick up from options
-		// deliberately did not use a PREFIX to handle this because there needs
-		// to be a namespace plan for that first
-		// we cannot keep repeating the same prefix name for different uri
-		// domains
-		setBaseUri("http://www.sparqlycode.com/id/");
 	}
 
 	public static boolean start(RootDoc root) {
@@ -97,7 +91,7 @@ public class RdfDoclet extends AbstractDoclet {
 			}
 
 			// create basic metadata
-			classOrIntUri.addProperty(RDFS.label, curr.name());
+			classOrIntUri.addProperty(RDFS.label, curr.name(), "en");
 			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
 			classOrIntUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
@@ -157,7 +151,11 @@ public class RdfDoclet extends AbstractDoclet {
 			Resource methodUri = model.createResource(baseUri
 					+ m.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
-
+			
+			// add a line number reference
+			methodUri.addProperty(JAVALANG.LineNumber, new Integer(m.position().line()).toString());
+			// create a label for the method
+			methodUri.addProperty(RDFS.label, m.name(), "en");
 			parametersToRdf(m, methodUri);
 
 			// parameterised return types need to be handled simularly to method

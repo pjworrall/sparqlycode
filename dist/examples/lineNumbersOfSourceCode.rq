@@ -1,0 +1,13 @@
+# This tests if rdfs:labels on methods are coming back as expected
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT *
+ { 
+   ?class java:method ?method .
+   ?method java:lineNumber ?line .
+   
+    # put test in here and result should be nothing if ok or a boolean fail is not
+
+} LIMIT 100

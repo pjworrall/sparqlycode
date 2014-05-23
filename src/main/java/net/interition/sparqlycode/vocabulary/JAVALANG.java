@@ -37,5 +37,7 @@ public class JAVALANG {
 	public static final Property Returns = property("returns");
 	public static final Property Field = property("field");
 	public static final Property IsAbsract = property("isAbstract");
+	public static final Property LineNumber = property("lineNumber");
+	public static final Property Import = property("imports");
 
 }
