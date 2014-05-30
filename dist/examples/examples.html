@@ -43,11 +43,20 @@
 <li><a href="#SPARQL_Queries"><span class="tocnumber">3</span> <span class="toctext">SPARQL Queries</span></a><ul>
 <li><a href="#Exploring_the_available_concepts_and_vocabulary"><span class="tocnumber">3.1</span> <span class="toctext">Exploring the available concepts and vocabulary</span></a></li>
 <li><a href="#Exploring_facts_about_Java_Classes"><span class="tocnumber">3.2</span> <span class="toctext">Exploring facts about Java Classes</span></a><ul>
-<li><a href="#Properties_of_Classes"><span class="tocnumber">3.2.1</span> <span class="toctext">Properties of Classes</span></a></li>
+<li><a href="#List_the_Classes"><span class="tocnumber">3.2.1</span> <span class="toctext">List the Classes</span></a></li>
+<li><a href="#Properties_of_Classes"><span class="tocnumber">3.2.2</span> <span class="toctext">Properties of Classes</span></a></li>
 </ul></li>
 <li><a href="#Linking_source_code_across_packages"><span class="tocnumber">3.3</span> <span class="toctext">Linking source code across packages</span></a><ul>
 <li><a href="#Default_Graph"><span class="tocnumber">3.3.1</span> <span class="toctext">Default Graph</span></a></li>
 </ul></li>
+<li><a href="#Examples_for_Release_0.0.1_Stories"><span class="tocnumber">3.4</span> <span class="toctext">Examples for Release 0.0.1 Stories</span></a><ul>
+<li><a href="#Convert_Java_source_code_to_RDF"><span class="tocnumber">3.4.1</span> <span class="toctext">Convert Java source code to RDF</span></a></li>
+<li><a href="#Dereference_to_underlying_source_code"><span class="tocnumber">3.4.2</span> <span class="toctext">Dereference to underlying source code</span></a></li>
+<li><a href="#Line_numbers_to_the_main_concepts_like_Classes.2C_Interfaces.2C_Enums_and_their_methods"><span class="tocnumber">3.4.3</span> <span class="toctext">Line numbers to the main concepts like Classes, Interfaces, Enums and their methods</span></a></li>
+<li><a href="#Transitive_navigation_of_methods"><span class="tocnumber">3.4.4</span> <span class="toctext">Transitive navigation of methods</span></a></li>
+<li><a href="#SPARQL_Endpoint_with_example_queries"><span class="tocnumber">3.4.5</span> <span class="toctext">SPARQL Endpoint with example queries</span></a></li>
+</ul></li>
+<li><a href="#Additional_Story_preempted_from_0.0.2"><span class="tocnumber">3.5</span> <span class="toctext">Additional Story preempted from 0.0.2</span></a></li>
 </ul></li>
 </ul>
 </td>
@@ -65,8 +74,14 @@ JAMWiki.UI.initializeTocToggle("hide", "show");
 <p>Sparqlycode vocabulary for Maven:</p>
 <pre style="color: green">PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
 </pre>
+<p>Sparqlycode vocabulary for concepts with no other place to be:</p>
+<pre style="color: green">PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
+</pre>
 <p>W3C RDF:</p>
 <pre style="color: green">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+</pre>
+<p>W3C RDFS</p>
+<pre style="color: green">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
 </pre>
 <h2><span id="Base_Uri_for_instances_of_Java_Sparqlycode">Base Uri for instances of Java Sparqlycode</span></h2>
 <p>The examples here are based on sparqlycode rdf for ActiveMQ AMQP Version 5.9.1 from the Git rep <a class="externallink" rel="nofollow" href="https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp;h=06f081e58b26d664d54b27ea493c741512f313b5;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d">https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp;h=06f081e58b26d664d54b27ea493c741512f313b5;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d</a>
@@ -104,6 +119,8 @@ PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 
 PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
 
+PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
+
 PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
 
 </pre>
@@ -122,12 +139,12 @@ FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24e
 
 </pre>
 <h1><span id="Test_Data">Test Data</span></h1>
-<p>For your convenience the sparclycode RDF for Apache ActiveMQ 5.9.1 
+<p>For your convenience the sparqlycode RDF for Apache ActiveMQ 5.9.1 
 can be found in $SPARQLYCODE_HOME/rdf/org.apache.activemq/5.9.1 .  If 
-you want to jump straight to querying sparclycode load these Turtle 
+you want to jump straight to querying sparqlycode load these Turtle 
 files into your triplestore, or other runtime environment for query 
 execution, with a named graph as previously introduced.</p>
-<p>If you want to generate sparclycode RDF for your own Maven based Java project, then refer to xxxxx</p>
+<p>If you want to generate sparqlycode RDF for your own Maven based Java project, then refer to xxxxx</p>
 <p><br></p>
 <h1><span id="SPARQL_Queries">SPARQL Queries</span></h1>
 <h2><span id="Exploring_the_available_concepts_and_vocabulary">Exploring the available concepts and vocabulary</span></h2>
@@ -148,15 +165,30 @@ FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24e
 } LIMIT 100
 </pre>
 <p><br>
-To get available properties ( <b>Need to check why Properties are not resolving</b> ):</p>
+To get available properties:</p>
 <p><br></p>
-<pre style="color: green">SELECT * { 
-	?s a rdf:Property .
-	} LIMIT 100
+<pre style="color: green">SELECT distinct ?property
+FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+ { 
+   ?s ?property ?o .
+
+} LIMIT 100
 </pre>
 <p><br></p>
 <p><br></p>
 <h2><span id="Exploring_facts_about_Java_Classes">Exploring facts about Java Classes</span></h2>
+<h3><span id="List_the_Classes">List the Classes</span></h3>
+<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class
+FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+ { 
+   ?class a java:Class .
+
+} 
+
+</pre>
+<p><br></p>
 <h3><span id="Properties_of_Classes">Properties of Classes</span></h3>
 <p>Lets see what properties are available on methods for a given Class. 
  Because the Uri are long it is getting difficult for us mortals to read
@@ -297,8 +329,78 @@ SELECT distinct ?source ?method ?type ?target
 } 
 </pre>
 <p><br></p>
+<h2><span id="Examples_for_Release_0.0.1_Stories">Examples for Release 0.0.1 Stories</span></h2>
+<h3><span id="Convert_Java_source_code_to_RDF">Convert Java source code to RDF</span></h3>
+<p>See example SPARQL queries previously.</p>
+<h3><span id="Dereference_to_underlying_source_code">Dereference to underlying source code</span></h3>
+<p>The example shows how to obtain the name of the graph that a 
+particular Class belongs.  This is a Uri to the source code repository 
+where that Class will be found.</p>
+<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT distinct ?source
+ { 
+   GRAPH ?source {
+   &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt;
+       ?p ?o .
+    }
+
+} LIMIT 1
+
+</pre>
+<h3><span id="Line_numbers_to_the_main_concepts_like_Classes.2C_Interfaces.2C_Enums_and_their_methods">Line numbers to the main concepts like Classes, Interfaces, Enums and their methods</span></h3>
+<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class ?method ?line
+ { 
+   ?class java:method ?method .
+   ?method java:lineNumber ?line .
+} 
+</pre>
+<p><br></p>
+<h3><span id="Transitive_navigation_of_methods">Transitive navigation of methods</span></h3>
+<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
+PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+
+SELECT 
+ { 
+      # todo
+} 
+</pre>
+<p><br></p>
+<h3><span id="SPARQL_Endpoint_with_example_queries">SPARQL Endpoint with example queries</span></h3>
+<p><a class="externallink" rel="nofollow" href="http://www.sparqlycode.com:1966/bigdata">http://www.sparqlycode.com:1966/bigdata</a></p>
+<p>Request an account to query to info@interition.net</p>
+<p>Example sparqlycode RDF files for some common Apache Java projects can be downloaded from the <a class="externallink" rel="nofollow" href="http://www.interition.net/i/products/sparqlingcode.html">Interiiton release page</a>.  To query with Jena:</p>
+<pre>arq --data file.ttl --query queryfile.rq
+</pre>
+<h2><span id="Additional_Story_preempted_from_0.0.2">Additional Story preempted from 0.0.2</span></h2>
+<p>0.0.2 had a story for including the Maven build information.  Some 
+initial concepts have already been implemented in this release. For 
+example:</p>
+<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
+PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
+PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+
+SELECT  *
+ { 
+      ?s a isc:MavenProject  .
+      ?s ?properties ?value .
+      ?value ?p ?o .
+} 
+</pre>
+<p><br></p>
 <hr>
-<p>Revision 966</p>
+<p>Revision 1015</p>
 <p><br></p>
 			</div>
 			<div class="clear"></div>
