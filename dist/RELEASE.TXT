@@ -1,0 +1,31 @@
+Sparqlycode 0.0.1 Son House Release Notes
+Introduction
+
+This is the first version of Sparqlycode - 0.0.1 Son House. The epic was the ability to query and link first class Java concepts in Java using SPARQL. The release also includes the first step to the epic for release 0.0.2 - Ability to query and link software build configuration using SPARQL.
+
+Find in the distribution documentation for installing and operating Sparqlycode:
+
+doc/readme.html
+
+examples/examples.html
+
+
+0.0.1 User Stories
+
+Convert Java source code to RDF - RDF based on an initial Ontology representing first class concepts only. See example SPARQL queries in examples.
+
+Dereference to underlying source code - Provide URI that will resolve to the actual source code file in the SCCS (Subversion in this release). This was implemented as a Uri for the Name Graph containing the triples. It goes to the root of the source code repository. Didn't implement a direct reference to the Java file itself as further thought on how to automate the minting of the Uri is required.
+
+Line numbers Line numbers to the main concepts like Classes, Interfaces, Enums and their methods. Line numbers for methods was implemented. Play with java:lineNumber property.
+
+Transitive navigation of methods - Ability to transitively query a Classes methods to their respective dependencies and the methods and properties thereof. This was key to the Sparqlycode value proposition and we were able to do this early on. See example documentation.
+
+
+SPARQL Endpoint with example queries - Provide a SPARQL Endpoint to query some prepared popular open source code as RDF. Did this but restricted access to request only. Provided access to sparqlycode RDF files for those that can down load them and query using Jena ARQ or their own Triplestore.
+Additional
+
+This release also preempts a key user story from 0.0.2:
+
+Build information - Process the Maven build configuration with the source code so both can be queried with SPARQL .
+
+Revision 1013
