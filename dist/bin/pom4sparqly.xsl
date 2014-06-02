@@ -47,6 +47,8 @@
         <xsl:copy-of copy-namespaces="no" select="project/modelVersion"/>
         <xsl:copy-of copy-namespaces="no" select="/project/parent"/>
         <xsl:copy-of copy-namespaces="no" select="/project/artifactId"/>
+        <xsl:copy-of copy-namespaces="no" select="/project/groupId"/>
+        <xsl:copy-of copy-namespaces="no" select="/project/version"/>
         <xsl:copy-of copy-namespaces="no" select="/project/description"/>
             
         <xsl:copy-of copy-namespaces="no" select="project/dependencies"/>
