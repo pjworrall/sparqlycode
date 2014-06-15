@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
 import com.hp.hpl.jena.rdf.model.Model;
@@ -96,6 +97,13 @@ public class RdfDoclet extends AbstractDoclet {
 			classOrIntUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
 
+			// handle imports
+			createImportsRdf(classOrIntUri, curr);
+
+			// todo: might get closer to resolving the Uri minting problem for
+			// dependencies
+			// with curr.importedClasses()
+
 			createConstructorRdf(classOrIntUri, curr);
 
 			createMethodsRdf(classOrIntUri, curr);
@@ -112,6 +120,10 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
+				
+				Access access = Access.createAccessModifier(field);
+				fieldResource.addProperty(JAVALANG.Access,access.getLabel(), "en");
+			
 			}
 
 			// add some simple attributes
@@ -122,6 +134,26 @@ public class RdfDoclet extends AbstractDoclet {
 
 			writeRdf(model);
 
+		}
+
+	}
+
+	private void createImportsRdf(Resource classOrIntUri, ClassDoc curr) {
+		// although the method is deprecated it might still works. It is removed for a
+		// design philosophy purpose
+		// and not for implementation reasons. Sparqlycode is actually raising a
+		// requirement for
+		// processing package declarations for reasons more important than that
+		// stated for ignoring imports.
+
+		@SuppressWarnings("deprecation")
+		PackageDoc[] packages = curr.importedPackages();
+
+		for (PackageDoc p : packages) {
+			Resource packageUri = model.createResource(baseUri
+					+ p.name().replace(".", "/"));
+
+			classOrIntUri.addProperty(JAVALANG.Import, packageUri);
 		}
 
 	}
@@ -151,9 +183,16 @@ public class RdfDoclet extends AbstractDoclet {
 			Resource methodUri = model.createResource(baseUri
 					+ m.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
-			
+
 			// add a line number reference
-			methodUri.addProperty(JAVALANG.LineNumber, new Integer(m.position().line()).toString());
+			methodUri.addProperty(JAVALANG.LineNumber, new Integer(m.position()
+					.line()).toString());
+			
+			// add access modifier
+			Access access = Access.createAccessModifier(m);
+			methodUri.addProperty(JAVALANG.Access,access.getLabel(), "en");
+			
+			
 			// create a label for the method
 			methodUri.addProperty(RDFS.label, m.name(), "en");
 			parametersToRdf(m, methodUri);
@@ -169,6 +208,7 @@ public class RdfDoclet extends AbstractDoclet {
 		}
 
 	}
+	
 
 	private void parametersToRdf(ExecutableMemberDoc method, Resource methodUri) {
 		// there is a conceptual issue here because a method does not know if a

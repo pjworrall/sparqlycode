@@ -42,6 +42,7 @@
          <xsl:element name="properties">
              <xsl:element name="sparqlycode.lib"><xsl:value-of select="$SPARQLYCODE_HOME" />/lib</xsl:element>
              <xsl:element name="subpackage"><xsl:value-of select="$SUBPACKAGE" /></xsl:element>
+              <xsl:copy-of copy-namespaces="no" select="/project/properties/*"/>
          </xsl:element>   
                   
         <xsl:copy-of copy-namespaces="no" select="project/modelVersion"/>
