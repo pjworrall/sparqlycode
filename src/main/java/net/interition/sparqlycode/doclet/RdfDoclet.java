@@ -87,7 +87,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// either!!
 			if (curr.isClass()) {
 				classOrIntUri.addProperty(RDF.type, JAVALANG.Class);
-				
+
 			}
 
 			if (curr.isInterface()) {
@@ -99,7 +99,7 @@ public class RdfDoclet extends AbstractDoclet {
 			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
 			classOrIntUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
-			
+
 			// add a line number reference
 			classOrIntUri.addProperty(JAVALANG.LineNumber,
 					model.createTypedLiteral(curr.position().line()));
@@ -127,9 +127,12 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
-				
-				fieldResource.addProperty(JAVALANG.IsStatic,model.createTypedLiteral(true));
 
+				if (field.isStatic()) {
+					fieldResource.addProperty(JAVALANG.IsStatic,
+							model.createTypedLiteral(true));
+				}
+				
 				Access access = Access.createAccessModifier(field);
 				fieldResource.addProperty(JAVALANG.Access, access.getLabel(),
 						"en");
@@ -141,7 +144,6 @@ public class RdfDoclet extends AbstractDoclet {
 				classOrIntUri.addProperty(JAVALANG.IsAbsract,
 						model.createTypedLiteral(true));
 			}
-			
 
 			writeRdf(model);
 
@@ -182,10 +184,10 @@ public class RdfDoclet extends AbstractDoclet {
 			Resource methodUri = model.createResource(baseUri
 					+ con.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Constructor, methodUri);
-			
+
 			// add a line number reference
 			methodUri.addProperty(JAVALANG.LineNumber,
-								model.createTypedLiteral(con.position().line()));
+					model.createTypedLiteral(con.position().line()));
 
 			parametersToRdf(con, methodUri);
 
@@ -207,6 +209,12 @@ public class RdfDoclet extends AbstractDoclet {
 			// add access modifier
 			Access access = Access.createAccessModifier(m);
 			methodUri.addProperty(JAVALANG.Access, access.getLabel(), "en");
+			
+			// is it static?
+			if (curr.isStatic()) {
+				methodUri.addProperty(JAVALANG.IsStatic,
+						model.createTypedLiteral(true));
+			}
 
 			// create a label for the method
 			methodUri.addProperty(RDFS.label, m.name(), "en");
@@ -243,9 +251,9 @@ public class RdfDoclet extends AbstractDoclet {
 			// things like E,K,T...etc. in Generics
 			if (p.typeName().length() == 1)
 				break;
-			
-			//..also avoid extends and super of generics
-			if(p.typeName().matches("(^.* extends .*$)|(^.* super .*$)"))
+
+			// ..also avoid extends and super of generics
+			if (p.typeName().matches("(^.* extends .*$)|(^.* super .*$)"))
 				break;
 
 			Resource[] g = getParameterizedType(p);
@@ -296,11 +304,11 @@ public class RdfDoclet extends AbstractDoclet {
 			r = new Resource[2];
 
 			String ptype = p.typeName().substring(0, open)
-					.replaceAll("(\\s+)|(<|>)","").replace(".", "/");
+					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
 			r[0] = model.createResource(baseUri + ptype);
 
 			String pbound = p.typeName().substring(open + 1, close)
-					.replaceAll("(\\s+)|(<|>)","").replace(".", "/");
+					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
 			r[1] = model.createResource(baseUri + pbound);
 
 		}
