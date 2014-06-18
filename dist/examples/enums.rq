@@ -1,0 +1,11 @@
+# This tests if rdfs:labels on classes are coming back as expected
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?class WHERE
+ { 
+   ?class a java:Enum .
+   
+} LIMIT 100

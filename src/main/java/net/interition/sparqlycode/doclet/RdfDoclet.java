@@ -116,6 +116,14 @@ public class RdfDoclet extends AbstractDoclet {
 				typeUri.addProperty(JAVALANG.IsSerializable,
 						model.createTypedLiteral(true));
 			}
+			
+			// if inner class then create relationship
+			if(curr.containingClass() != null) {
+				Resource containingClazz = model.createResource(baseUri
+						+ curr.containingClass().qualifiedName().replace(".", "/"));
+				typeUri.addProperty(JAVALANG.InnerClassOf, containingClazz);
+			}
+			
 
 			// handle imports
 			createImportsRdf(typeUri, curr);

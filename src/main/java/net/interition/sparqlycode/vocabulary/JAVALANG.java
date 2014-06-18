@@ -37,6 +37,7 @@ public class JAVALANG {
 	public static final Property Extends = property("extends");
 	public static final Property Implements = property("implements");
 	public static final Property Returns = property("returns");
+	public static final Property InnerClassOf = property("innerClassOf");
 	public static final Property Field = property("field");
 	public static final Property IsAbsract = property("isAbstract");
 	public static final Property IsStatic = property("isStatic");
