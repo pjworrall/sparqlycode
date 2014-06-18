@@ -25,6 +25,7 @@ public class JAVALANG {
 
 	public static final Resource Class = resource("Class");
 	public static final Resource Interface = resource("Interface");
+	public static final Resource Enum = resource("Enum");
 	
 	public static final Property Name = property("name");
 	public static final Property Package = property("package");
@@ -38,6 +39,10 @@ public class JAVALANG {
 	public static final Property Field = property("field");
 	public static final Property IsAbsract = property("isAbstract");
 	public static final Property IsStatic = property("isStatic");
+	public static final Property IsFinal = property("isFinal");
+	public static final Property IsTransient = property("isTransient");
+	public static final Property IsVolatile = property("isVolatile");
+	public static final Property IsSerializable = property("isSerializable");
 	public static final Property LineNumber = property("lineNumber");
 	public static final Property Import = property("imports");
 	public static final Property Access = property("access");

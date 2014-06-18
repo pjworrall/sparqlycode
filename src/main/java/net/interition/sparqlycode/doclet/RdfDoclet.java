@@ -93,6 +93,10 @@ public class RdfDoclet extends AbstractDoclet {
 			if (curr.isInterface()) {
 				classOrIntUri.addProperty(RDF.type, JAVALANG.Interface);
 			}
+			
+			if (curr.isEnum()) {
+				classOrIntUri.addProperty(RDF.type, JAVALANG.Enum);
+			}
 
 			// create basic metadata
 			classOrIntUri.addProperty(RDFS.label, curr.name(), "en");
@@ -103,6 +107,17 @@ public class RdfDoclet extends AbstractDoclet {
 			// add a line number reference
 			classOrIntUri.addProperty(JAVALANG.LineNumber,
 					model.createTypedLiteral(curr.position().line()));
+			
+			// add some simple attributes
+			if (curr.isAbstract()) {
+				classOrIntUri.addProperty(JAVALANG.IsAbsract,
+						model.createTypedLiteral(true));
+			}
+			
+			if (curr.isSerializable()) {
+				classOrIntUri.addProperty(JAVALANG.IsSerializable,
+						model.createTypedLiteral(true));
+			}
 
 			// handle imports
 			createImportsRdf(classOrIntUri, curr);
@@ -127,9 +142,25 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
+				
 
 				if (field.isStatic()) {
 					fieldResource.addProperty(JAVALANG.IsStatic,
+							model.createTypedLiteral(true));
+				}
+				
+				if (field.isFinal()) {
+					fieldResource.addProperty(JAVALANG.IsFinal,
+							model.createTypedLiteral(true));
+				}
+				
+				if (field.isTransient()) {
+					fieldResource.addProperty(JAVALANG.IsTransient,
+							model.createTypedLiteral(true));
+				}
+				
+				if (field.isVolatile()) {
+					fieldResource.addProperty(JAVALANG.IsVolatile,
 							model.createTypedLiteral(true));
 				}
 				
@@ -138,12 +169,7 @@ public class RdfDoclet extends AbstractDoclet {
 						"en");
 
 			}
-
-			// add some simple attributes
-			if (curr.isAbstract() == true) {
-				classOrIntUri.addProperty(JAVALANG.IsAbsract,
-						model.createTypedLiteral(true));
-			}
+			
 
 			writeRdf(model);
 

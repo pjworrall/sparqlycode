@@ -1,0 +1,12 @@
+# This tests if rdfs:labels on classes are coming back as expected
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?class ?field ?t ?v WHERE
+ { 
+   ?class java:field ?field .
+   ?field java:isTransient ?t .
+   
+} LIMIT 100
