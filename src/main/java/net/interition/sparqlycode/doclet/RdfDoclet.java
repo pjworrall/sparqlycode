@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,68 +78,77 @@ public class RdfDoclet extends AbstractDoclet {
 
 			ClassDoc curr = arr[i];
 
-			Resource classOrIntUri = model.createResource(baseUri
+			Resource typeUri = model.createResource(baseUri
 					+ curr.qualifiedName().replace(".", "/"));
 
 			// check if class or interface. potential bug here is it is not
 			// either!!
 			if (curr.isClass()) {
-				classOrIntUri.addProperty(RDF.type, JAVALANG.Class);
+				typeUri.addProperty(RDF.type, JAVALANG.Class);
 
 			}
 
 			if (curr.isInterface()) {
-				classOrIntUri.addProperty(RDF.type, JAVALANG.Interface);
+				typeUri.addProperty(RDF.type, JAVALANG.Interface);
 			}
 			
 			if (curr.isEnum()) {
-				classOrIntUri.addProperty(RDF.type, JAVALANG.Enum);
+				typeUri.addProperty(RDF.type, JAVALANG.Enum);
 			}
 
 			// create basic metadata
-			classOrIntUri.addProperty(RDFS.label, curr.name(), "en");
-			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
-			classOrIntUri.addProperty(JAVALANG.Package, curr
+			typeUri.addProperty(RDFS.label, curr.name(), "en");
+			typeUri.addProperty(JAVALANG.Name, curr.name());
+			typeUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
 
 			// add a line number reference
-			classOrIntUri.addProperty(JAVALANG.LineNumber,
+			typeUri.addProperty(JAVALANG.LineNumber,
 					model.createTypedLiteral(curr.position().line()));
 			
 			// add some simple attributes
 			if (curr.isAbstract()) {
-				classOrIntUri.addProperty(JAVALANG.IsAbsract,
+				typeUri.addProperty(JAVALANG.IsAbsract,
 						model.createTypedLiteral(true));
 			}
 			
 			if (curr.isSerializable()) {
-				classOrIntUri.addProperty(JAVALANG.IsSerializable,
+				typeUri.addProperty(JAVALANG.IsSerializable,
 						model.createTypedLiteral(true));
 			}
 
 			// handle imports
-			createImportsRdf(classOrIntUri, curr);
+			createImportsRdf(typeUri, curr);
 
 			// todo: might get closer to resolving the Uri minting problem for
 			// dependencies
 			// with curr.importedClasses()
 
-			createConstructorRdf(classOrIntUri, curr);
+			createConstructorRdf(typeUri, curr);
 
-			createMethodsRdf(classOrIntUri, curr);
+			createMethodsRdf(typeUri, curr);
 
 			// handle super classes
 			if (curr.superclass() != null) {
 				Resource superClazz = model.createResource(baseUri
 						+ curr.superclass().qualifiedName().replace(".", "/"));
-				classOrIntUri.addProperty(JAVALANG.Extends, superClazz);
+				typeUri.addProperty(JAVALANG.Extends, superClazz);
 			}
-
+			
+			// handle implemented interfaces
+			for(Type implementedInterface : curr.interfaceTypes() ) {
+				Resource interfaceResource = model.createResource(baseUri
+						+ implementedInterface.qualifiedTypeName().replace(".", "/"));
+				typeUri.addProperty(JAVALANG.Implements,interfaceResource);
+			}
+				
+			
+			
 			// handle fields
 			for (FieldDoc field : curr.fields()) {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
-				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
+				typeUri.addProperty(JAVALANG.Field, fieldResource);
 				
 
 				if (field.isStatic()) {
