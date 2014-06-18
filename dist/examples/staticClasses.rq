@@ -1,0 +1,13 @@
+# This tests if rdfs:labels on classes are coming back as expected
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT * WHERE
+ { 
+   #don't know why or difference that caused boolean type not to resolve as the code did try and assign a type.
+   #?class java:isStatic "true"^^xsd:boolean .
+   ?class java:isStatic true .
+   
+} LIMIT 100

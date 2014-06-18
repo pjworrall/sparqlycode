@@ -87,6 +87,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// either!!
 			if (curr.isClass()) {
 				classOrIntUri.addProperty(RDF.type, JAVALANG.Class);
+				
 			}
 
 			if (curr.isInterface()) {
@@ -122,6 +123,8 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
+				
+				fieldResource.addProperty(JAVALANG.IsStatic,model.createTypedLiteral(true));
 
 				Access access = Access.createAccessModifier(field);
 				fieldResource.addProperty(JAVALANG.Access, access.getLabel(),
@@ -134,6 +137,7 @@ public class RdfDoclet extends AbstractDoclet {
 				classOrIntUri.addProperty(JAVALANG.IsAbsract,
 						model.createTypedLiteral(true));
 			}
+			
 
 			writeRdf(model);
 
