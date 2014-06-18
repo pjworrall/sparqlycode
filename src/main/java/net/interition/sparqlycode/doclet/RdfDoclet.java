@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,10 +122,11 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 				classOrIntUri.addProperty(JAVALANG.Field, fieldResource);
-				
+
 				Access access = Access.createAccessModifier(field);
-				fieldResource.addProperty(JAVALANG.Access,access.getLabel(), "en");
-			
+				fieldResource.addProperty(JAVALANG.Access, access.getLabel(),
+						"en");
+
 			}
 
 			// add some simple attributes
@@ -139,7 +142,8 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	private void createImportsRdf(Resource classOrIntUri, ClassDoc curr) {
-		// although the method is deprecated it might still works. It is removed for a
+		// although the method is deprecated it might still works. It is removed
+		// for a
 		// design philosophy purpose
 		// and not for implementation reasons. Sparqlycode is actually raising a
 		// requirement for
@@ -187,12 +191,11 @@ public class RdfDoclet extends AbstractDoclet {
 			// add a line number reference
 			methodUri.addProperty(JAVALANG.LineNumber, new Integer(m.position()
 					.line()).toString());
-			
+
 			// add access modifier
 			Access access = Access.createAccessModifier(m);
-			methodUri.addProperty(JAVALANG.Access,access.getLabel(), "en");
-			
-			
+			methodUri.addProperty(JAVALANG.Access, access.getLabel(), "en");
+
 			// create a label for the method
 			methodUri.addProperty(RDFS.label, m.name(), "en");
 			parametersToRdf(m, methodUri);
@@ -208,7 +211,6 @@ public class RdfDoclet extends AbstractDoclet {
 		}
 
 	}
-	
 
 	private void parametersToRdf(ExecutableMemberDoc method, Resource methodUri) {
 		// there is a conceptual issue here because a method does not know if a
@@ -223,6 +225,17 @@ public class RdfDoclet extends AbstractDoclet {
 			// Could not figure out how to use the API to determine types on
 			// ParameterizedTypes so just parsed string with
 			// a utility method.
+			// This did not work very well and needs special attention - see
+			// COD-41.
+			// in particular had to have a special case to avoid processing
+			// things like E,K,T...etc. in Generics
+			if (p.typeName().length() == 1)
+				break;
+			
+			//..also avoid extends and super of generics
+			if(p.typeName().matches("(^.* extends .*$)|(^.* super .*$)"))
+				break;
+
 			Resource[] g = getParameterizedType(p);
 
 			switch (g.length) {
@@ -253,24 +266,30 @@ public class RdfDoclet extends AbstractDoclet {
 
 		Resource[] r = null;
 
+		System.out.println("parameterizedType> " + p.type());
+		System.out.println("parameterizedTypeName> " + p.typeName());
+
 		if (!p.type().toString().contains("<")) {
 			Resource pType = model.createResource(baseUri
 					+ p.type().qualifiedTypeName().replace(".", "/"));
 			r = new Resource[1];
 			r[0] = pType;
 		} else {
+
 			// Unpack using literal to create a java:parameterBound
 			// Parameter type didn't have any methods to do this better
 			int open = p.typeName().indexOf('<');
 			int close = p.typeName().indexOf('>');
 
 			r = new Resource[2];
-			r[0] = model.createResource(baseUri
-					+ p.typeName().substring(0, open).replace(".", "/"));
-			r[1] = model
-					.createResource(baseUri
-							+ p.typeName().substring(open + 1, close)
-									.replace(".", "/"));
+
+			String ptype = p.typeName().substring(0, open)
+					.replaceAll("(\\s+)|(<|>)","").replace(".", "/");
+			r[0] = model.createResource(baseUri + ptype);
+
+			String pbound = p.typeName().substring(open + 1, close)
+					.replaceAll("(\\s+)|(<|>)","").replace(".", "/");
+			r[1] = model.createResource(baseUri + pbound);
 
 		}
 

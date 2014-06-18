@@ -12,7 +12,7 @@
     
     <xsl:param
         name="SPARQLYCODE_VERSION"
-        select="'Sparqlycode 0.0.1 Son House'"/>
+        select="'Sparqlycode 0.0.2 Son House'"/>
     
     <xsl:param
         name="SPARQLYCODE_HOME"
