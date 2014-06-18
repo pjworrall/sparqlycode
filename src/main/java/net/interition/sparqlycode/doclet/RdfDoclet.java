@@ -99,6 +99,10 @@ public class RdfDoclet extends AbstractDoclet {
 			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
 			classOrIntUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
+			
+			// add a line number reference
+			classOrIntUri.addProperty(JAVALANG.LineNumber,
+					model.createTypedLiteral(curr.position().line()));
 
 			// handle imports
 			createImportsRdf(classOrIntUri, curr);
@@ -178,6 +182,10 @@ public class RdfDoclet extends AbstractDoclet {
 			Resource methodUri = model.createResource(baseUri
 					+ con.qualifiedName().replace(".", "/"));
 			classOrIntUri.addProperty(JAVALANG.Constructor, methodUri);
+			
+			// add a line number reference
+			methodUri.addProperty(JAVALANG.LineNumber,
+								model.createTypedLiteral(con.position().line()));
 
 			parametersToRdf(con, methodUri);
 
@@ -193,8 +201,8 @@ public class RdfDoclet extends AbstractDoclet {
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
 
 			// add a line number reference
-			methodUri.addProperty(JAVALANG.LineNumber, new Integer(m.position()
-					.line()).toString());
+			methodUri.addProperty(JAVALANG.LineNumber,
+					model.createTypedLiteral(m.position().line()));
 
 			// add access modifier
 			Access access = Access.createAccessModifier(m);
