@@ -1,0 +1,21 @@
+# This finds all classes that implement equals method but do not provide a hashCode method
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?classes WHERE
+ {  
+ 
+    # set of all classes with equals methods minus those that have hashCode methods
+    # produces classes that are missing hashCode()
+  
+    ?classes java:method ?equals .
+    ?equals rdfs:label "equals"@en .
+    
+   minus {
+    ?hashCode rdfs:label "hashCode"@en .
+    ?classes java:method ?hashCode .
+       } 
+  
+} LIMIT 100
