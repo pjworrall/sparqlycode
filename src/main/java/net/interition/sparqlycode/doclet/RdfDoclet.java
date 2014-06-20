@@ -97,7 +97,7 @@ public class RdfDoclet extends AbstractDoclet {
 			}
 
 			// create basic metadata
-			typeUri.addProperty(RDFS.label, curr.name(), "en");
+			typeUri.addProperty(RDFS.label, curr.name());
 			typeUri.addProperty(JAVALANG.Name, curr.name());
 			typeUri.addProperty(JAVALANG.Package, curr
 					.containingPackage().name());
@@ -180,8 +180,7 @@ public class RdfDoclet extends AbstractDoclet {
 				}
 				
 				Access access = Access.createAccessModifier(field);
-				fieldResource.addProperty(JAVALANG.Access, access.getLabel(),
-						"en");
+				fieldResource.addProperty(JAVALANG.Access, access.getLabel());
 
 			}
 			
@@ -249,7 +248,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// add access modifier
 			Access access = Access.createAccessModifier(m);
-			methodUri.addProperty(JAVALANG.Access, access.getLabel(), "en");
+			methodUri.addProperty(JAVALANG.Access, access.getLabel());
 			
 			// is it static?
 			if (curr.isStatic()) {
@@ -258,7 +257,7 @@ public class RdfDoclet extends AbstractDoclet {
 			}
 
 			// create a label for the method
-			methodUri.addProperty(RDFS.label, m.name(), "en");
+			methodUri.addProperty(RDFS.label, m.name());
 			parametersToRdf(m, methodUri);
 
 			// parameterised return types need to be handled simularly to method

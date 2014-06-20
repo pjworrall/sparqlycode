@@ -11,10 +11,10 @@ SELECT ?classes WHERE
     # produces classes that are missing hashCode()
   
     ?classes java:method ?equals .
-    ?equals rdfs:label "equals"@en .
+    ?equals rdfs:label "equals" .
     
    minus {
-    ?hashCode rdfs:label "hashCode"@en .
+    ?hashCode rdfs:label "hashCode" .
     ?classes java:method ?hashCode .
        } 
   

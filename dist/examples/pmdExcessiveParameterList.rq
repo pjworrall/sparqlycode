@@ -1,0 +1,14 @@
+# This finds methods and their respective classes with an excessive number of parameters. Eg 5
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?class ?method (count(?parameter) as ?totalParameters) WHERE
+ {  
+    ?method java:parameter ?parameter .
+    ?class java:method ?method .
+}
+group by ?class ?method
+HAVING (?totalParameters > 5)
+limit 100

@@ -1,0 +1,17 @@
+# This finds classes with an excessive number of methods . Eg > 10
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?class (count(?method) as ?totalMethods) WHERE
+
+ {  
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName .
+    filter (regex(?methodName,"^get|^set|^is","i" ))
+
+}
+group by ?class
+having (?totalMethods > 10)
+limit 100

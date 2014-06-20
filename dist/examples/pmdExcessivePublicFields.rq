@@ -1,0 +1,16 @@
+# This finds classes with an excessive number of public methods . Eg > 10
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT ?class (count(?field) as ?totalPublicFields) WHERE
+
+ {  
+    ?class java:field ?field .
+    ?field java:access "Public" .
+
+}
+group by ?class
+having (?totalPublicFields > 10)
+limit 100

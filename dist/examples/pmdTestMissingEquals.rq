@@ -8,10 +8,10 @@ SELECT ?classes WHERE
  {  
   
     ?classes java:method ?hashCode .
-    ?hashCode rdfs:label "hashCode"@en .
+    ?hashCode rdfs:label "hashCode" .
     
    minus {
-    ?equals rdfs:label "equals"@en .
+    ?equals rdfs:label "equals" .
     ?classes java:method ?equals .
        } 
   
