@@ -117,6 +117,11 @@ public class RdfDoclet extends AbstractDoclet {
 						model.createTypedLiteral(true));
 			}
 			
+			if (curr.isFinal()) {
+				typeUri.addProperty(JAVALANG.IsFinal,
+						model.createTypedLiteral(true));
+			}
+			
 			// if inner class then create relationship
 			if(curr.containingClass() != null) {
 				Resource containingClazz = model.createResource(baseUri
@@ -158,6 +163,8 @@ public class RdfDoclet extends AbstractDoclet {
 						+ field.qualifiedName().replace(".", "/"));
 				typeUri.addProperty(JAVALANG.Field, fieldResource);
 				
+				// assign a label
+				fieldResource.addProperty(RDFS.label, field.name());
 
 				if (field.isStatic()) {
 					fieldResource.addProperty(JAVALANG.IsStatic,
@@ -251,10 +258,28 @@ public class RdfDoclet extends AbstractDoclet {
 			methodUri.addProperty(JAVALANG.Access, access.getLabel());
 			
 			// is it static?
-			if (curr.isStatic()) {
+			if (m.isStatic()) {
 				methodUri.addProperty(JAVALANG.IsStatic,
 						model.createTypedLiteral(true));
 			}
+			
+			// is Abstract ?
+			if (m.isAbstract()) {
+				methodUri.addProperty(JAVALANG.IsAbsract,
+						model.createTypedLiteral(true));
+			}
+			
+			
+			// throws any types ?
+			for ( Type t : m.thrownExceptionTypes() ) {
+			   Resource thrownTypeUri = model.createResource(baseUri
+						+ t.qualifiedTypeName().replace(".", "/"));
+			   
+			   methodUri.addProperty(JAVALANG.Throws,
+					   thrownTypeUri);
+			   
+			}
+			
 
 			// create a label for the method
 			methodUri.addProperty(RDFS.label, m.name());
@@ -326,8 +351,8 @@ public class RdfDoclet extends AbstractDoclet {
 
 		Resource[] r = null;
 
-		System.out.println("parameterizedType> " + p.type());
-		System.out.println("parameterizedTypeName> " + p.typeName());
+//		System.out.println("parameterizedType> " + p.type());
+//		System.out.println("parameterizedTypeName> " + p.typeName());
 
 		if (!p.type().toString().contains("<")) {
 			Resource pType = model.createResource(baseUri
