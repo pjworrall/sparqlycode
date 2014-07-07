@@ -49,5 +49,6 @@ public class JAVALANG {
 	public static final Property LineNumber = property("lineNumber");
 	public static final Property Import = property("imports");
 	public static final Property Access = property("access");
+	public static final Property IsSynchronized = property("isSynchronized");
 
 }

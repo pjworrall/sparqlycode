@@ -163,6 +163,10 @@ public class RdfDoclet extends AbstractDoclet {
 						+ field.qualifiedName().replace(".", "/"));
 				typeUri.addProperty(JAVALANG.Field, fieldResource);
 				
+				// add a line number reference
+				fieldResource.addProperty(JAVALANG.LineNumber,
+						model.createTypedLiteral(field.position().line()));
+				
 				// assign a label
 				fieldResource.addProperty(RDFS.label, field.name());
 
@@ -257,15 +261,27 @@ public class RdfDoclet extends AbstractDoclet {
 			Access access = Access.createAccessModifier(m);
 			methodUri.addProperty(JAVALANG.Access, access.getLabel());
 			
+			// is final
+			if (m.isFinal()) {
+				methodUri.addProperty(JAVALANG.IsFinal,
+						model.createTypedLiteral(true));
+			}
+			
 			// is it static?
 			if (m.isStatic()) {
 				methodUri.addProperty(JAVALANG.IsStatic,
 						model.createTypedLiteral(true));
 			}
 			
-			// is Abstract ?
+			// is abstract ?
 			if (m.isAbstract()) {
 				methodUri.addProperty(JAVALANG.IsAbsract,
+						model.createTypedLiteral(true));
+			}
+			
+			// is abstract ?
+			if (m.isSynchronized()) {
+				methodUri.addProperty(JAVALANG.IsSynchronized,
 						model.createTypedLiteral(true));
 			}
 			
