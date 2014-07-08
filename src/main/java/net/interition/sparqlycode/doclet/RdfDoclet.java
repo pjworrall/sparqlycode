@@ -154,7 +154,15 @@ public class RdfDoclet extends AbstractDoclet {
 						+ implementedInterface.qualifiedTypeName().replace(".", "/"));
 				typeUri.addProperty(JAVALANG.Implements,interfaceResource);
 			}
-				
+			
+			// what can we do with annotations ?
+			for ( AnnotationDesc desc : curr.annotations() ) {				
+				AnnotationTypeDoc a = desc.annotationType();
+				Resource annotationTypeUri = model.createResource(baseUri
+						+ a.qualifiedTypeName().replace(".", "/"));
+				typeUri.addProperty(JAVALANG.HasAnnotation,
+					   annotationTypeUri);
+			}
 			
 			
 			// handle fields
@@ -188,6 +196,15 @@ public class RdfDoclet extends AbstractDoclet {
 				if (field.isVolatile()) {
 					fieldResource.addProperty(JAVALANG.IsVolatile,
 							model.createTypedLiteral(true));
+				}
+				
+				// what can we do with annotations ?
+				for ( AnnotationDesc desc : field.annotations() ) {				
+					AnnotationTypeDoc a = desc.annotationType();
+					Resource annotationTypeUri = model.createResource(baseUri
+							+ a.qualifiedTypeName().replace(".", "/"));
+					fieldResource.addProperty(JAVALANG.HasAnnotation,
+						   annotationTypeUri);
 				}
 				
 				Access access = Access.createAccessModifier(field);
@@ -294,6 +311,15 @@ public class RdfDoclet extends AbstractDoclet {
 			   methodUri.addProperty(JAVALANG.Throws,
 					   thrownTypeUri);
 			   
+			}
+			
+			// what can we do with annotations ?
+			for ( AnnotationDesc desc : m.annotations() ) {				
+				AnnotationTypeDoc a = desc.annotationType();
+				Resource annotationTypeUri = model.createResource(baseUri
+						+ a.qualifiedTypeName().replace(".", "/"));
+			   methodUri.addProperty(JAVALANG.HasAnnotation,
+					   annotationTypeUri);
 			}
 			
 
