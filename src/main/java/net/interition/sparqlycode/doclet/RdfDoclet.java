@@ -169,6 +169,9 @@ public class RdfDoclet extends AbstractDoclet {
 			for (FieldDoc field : curr.fields()) {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
+				
+				fieldResource.addProperty(RDF.type, JAVALANG.AField);
+				
 				typeUri.addProperty(JAVALANG.Field, fieldResource);
 				
 				// add a line number reference
@@ -268,6 +271,9 @@ public class RdfDoclet extends AbstractDoclet {
 		for (MethodDoc m : curr.methods()) {
 			Resource methodUri = model.createResource(baseUri
 					+ m.qualifiedName().replace(".", "/"));
+			
+			methodUri.addProperty(RDF.type, JAVALANG.AMethod);
+			
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
 
 			// add a line number reference

@@ -26,6 +26,8 @@ public class JAVALANG {
 	public static final Resource Class = resource("Class");
 	public static final Resource Interface = resource("Interface");
 	public static final Resource Enum = resource("Enum");
+	public static final Resource AMethod = resource("Method");
+	public static final Resource AField = resource("Field");
 	
 	public static final Property Name = property("name");
 	public static final Property Package = property("package");
