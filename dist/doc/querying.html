@@ -1,0 +1,119 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>Running queries on code converted into sparqlycode - Codeleaks</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="DC.Title" content="Running queries on code converted into sparqlycode - Codeleaks" />
+
+	<meta name="description" content="wiki for Codeleaks product set - Eg SPARQLYCODE" />
+
+
+	<link rel="start" title="Codeleaks" href="/interwiki/codeleaks/Codeleaks" />
+	<link rel="home" title="Codeleaks" href="/interwiki/codeleaks/Codeleaks" />
+
+	<link href="readme_files/jamwiki.css" type="text/css" rel="stylesheet" />
+</head>
+<body style="background:none">
+
+<h1 id="contents-header">Running queries on code converted into sparqlycode</h1>
+
+
+
+
+	
+		
+			<div id="content-article">
+			
+			
+			
+			<h3><span id="Follow_the_instructions_below_to_query_your_local_sparqlycode_without_needing_a_triplestore:">Follow the instructions below to query your local sparqlycode without needing a triplestore:</span></h3>
+<p>Apache Jena is needed to run SPARQL queries locally. Please visit the Jena website to download the latest version. Once Jena is downloaded, unzip it to a directory on your filesystem.</p>
+<p>In order to be able to use the Jena commands, the <i>$JENA_HOME</i> environment variable has to be set to point to the unzipped directory.</p>
+<ul>
+<li>On a Unix (Linux / Mac) environment this can be done by using the command</li>
+</ul>
+<pre>
+export JENA_HOME='&lt;path_to_Jena_directory&gt;'
+</pre>
+<ul>
+<li>On Windows it can be done either by going to Control Panel and searching for environment variables or by typing</li>
+</ul>
+<pre>
+set JENA_HOME='&lt;path_to_Jena_directory&gt;'
+</pre>
+<p>Once done, the <i>JENA_HOME/bin</i> directory has to be put on the PATH so that the commands can be invoked.</p>
+<ul>
+<li>On a Unix (Linux / Mac) environment this can be done by using the command</li>
+</ul>
+<pre>
+export PATH=$PATH:$JENA_HOME/bin
+</pre>
+<p><br /></p>
+<ul>
+<li>On Windows it's</li>
+</ul>
+<pre>
+set PATH=%PATH%;%JENA_HOME%/bin
+</pre>
+<p>Now Jena should be all set up. Try it by typing</p>
+<pre>
+arq --version
+</pre>
+<p>This should return the Jena and ARQ versions. If no version is returned please revisit the steps above.</p>
+<p><br />
+To query your sparqlycode locally you'll need Jena's ARQ tool. This requires a file containing a SPARQL query, by convention with the suffix .rq, and a data file that will be queried. An RDF file in the Turtle format, suffix of .ttl, is created by sparqlycode in the project's <i>./target/site/apidocs</i> directory. To create a test .rq file, open a text editor and paste in the following:</p>
+<pre>
+SELECT *
+
+WHERE {
+
+?s ?p ?o
+
+} LIMIT 10
+</pre>
+<p>Save the file as <i>test.rq</i>.</p>
+<p>Navigate to the &quot;sparqlycoded&quot; project's root directory in the command line. Then type</p>
+<pre>
+arq --data=./target/site/apidocs/sparqlycode.ttl --query &lt;x/test.rq&gt;
+</pre>
+<p>This should run the query from the .rq file on the sparqlycode.ttl file and produce 10 (or less) results on the command line.</p>
+<p>NOTE: sparqlycode 0.0.2 is shipped with several PMD equivalent SPARQL queries. These can be found in the examples directory of the distribution. The test.rq file can be replaced with any of these files in the appropriate part of the arq command to check the local sparqlycode for any bad practices.</p>
+<p>For any further help, please send an email to <a class="externallink" rel="nofollow" href="mailto:info@interition.net">info@interition.net</a></p>
+<hr />
+<p>Revision 1261</p>
+			</div>
+			<div class="clear"></div>
+			
+		
+	
+	
+
+
+
+
+
+	
+
+
+	
+
+
+
+</body>
+</html>
