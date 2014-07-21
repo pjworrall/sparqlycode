@@ -48,8 +48,15 @@ are provided.
 
 
 
+  Issues
+
+We do know of some issues that will be resolved in the next release.
+Most importantly:
+
+Constructors and overloaded methods are not processed correctly
+
 
 ------------------------------------------------------------------------
 
-Revision 1264
+Revision 1265
 
