@@ -1,0 +1,12 @@
+# This tests if overloaded constructors are produced correctly
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT * WHERE
+ { 
+   ?class java:constructor ?constructor .
+   ?constructor rdfs:label "OverloadedConstructorClass" .
+   
+} LIMIT 100
