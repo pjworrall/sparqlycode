@@ -1,0 +1,15 @@
+# Finds any interface that only has constants in it, and no method declarations.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?interface
+WHERE {
+?interface a java:Interface .
+?interface java:field ?field .
+?field java:isStatic true .
+?field java:isFinal true .
+?field java:access "Public" .
+FILTER NOT EXISTS {?interface java:method ?method} .
+} 
+GROUP BY ?interface
+HAVING ( COUNT (?field) > 0)

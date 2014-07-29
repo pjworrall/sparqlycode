@@ -1,0 +1,15 @@
+# This finds all static classes that are unusable
+# this cannot be done until we deal with COD-159
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.example.org/>
+
+SELECT *  WHERE
+ {  
+  
+    #?method java:access "Private" .
+
+    <http://www.interition.net/sparqlycode/id/net/interition/sparqlycode/pmdtestsuite/MissingStaticMethodInNonInstantiatableClass> ?p ?o .
+
+} LIMIT 100

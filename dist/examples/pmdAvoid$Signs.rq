@@ -1,0 +1,30 @@
+# Find classes or interfaces with class / method / field including the '$' sign.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class ?fieldName ?methodName 
+WHERE {
+{
+?class a java:Class .
+?class rdfs:label ?className .
+OPTIONAL {
+    ?class java:field ?field .
+    ?class rdfs:label ?fieldName .
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName . 
+    }
+FILTER (REGEX(?className, ".[$]") || REGEX(?fieldName, ".[$]") || REGEX(?methodName, ".[$]"))
+}
+UNION {
+?class a java:Interface .
+?class rdfs:label ?interfaceName .
+OPTIONAL {
+    ?class java:field ?field .
+    ?field rdfs:label ?fieldName .
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName .
+    }
+FILTER (REGEX(?interfaceName, ".[$]") || REGEX(?fieldName, ".[$]") || REGEX(?methodName, ".[$]"))
+}
+}

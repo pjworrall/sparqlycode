@@ -1,0 +1,11 @@
+# This finds classes with final field declarations that aren't static
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class ?field WHERE
+
+ {
+    ?class java:field ?field .
+    ?field java:isFinal true .
+    FILTER NOT EXISTS {?field java:isStatic true}
+} 

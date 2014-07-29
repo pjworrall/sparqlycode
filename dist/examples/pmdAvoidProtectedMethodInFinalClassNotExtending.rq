@@ -1,0 +1,14 @@
+# Finds protected methods in final classes that don't extend other classes with protected methods.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:extends <http://www.interition.net/sparqlycode/id/java/lang/Object> .
+?class java:isFinal true .
+?class java:method ?method .
+?method java:access "Protected" .
+?method rdfs:label ?methodName .
+}

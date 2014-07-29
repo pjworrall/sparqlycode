@@ -269,16 +269,26 @@ public class RdfDoclet extends AbstractDoclet {
 	private void createMethodsRdf(Resource classOrIntUri, ClassDoc curr) {
 		// handle the constructors
 		for (MethodDoc m : curr.methods()) {
-			Resource methodUri = model.createResource(baseUri
-					+ m.qualifiedName().replace(".", "/"));
 			
+			// get the line number as it will be used a couple of times
+			int line = m.position().line();
+			
+			// need something here to add a differentiating suffix to make uri uniqie in case method is overloaded
+			// options considered
+			// 1) add a random number onto the end that will be unique - could be long, reduces readability
+			// 2) figure out how to add a sequence number - implies an oder when there is  not on, hard to do
+			// 3) add the line number to it - will be unique in a Class and useful for a human - used this option!
+			
+			Resource methodUri = model.createResource(baseUri
+					+ m.qualifiedName().replace(".", "/") + "#" + line);
+			
+			// add a line number reference
+			methodUri.addProperty(JAVALANG.LineNumber,
+					model.createTypedLiteral(line));
+					
 			methodUri.addProperty(RDF.type, JAVALANG.AMethod);
 			
 			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
-
-			// add a line number reference
-			methodUri.addProperty(JAVALANG.LineNumber,
-					model.createTypedLiteral(m.position().line()));
 
 			// add access modifier
 			Access access = Access.createAccessModifier(m);

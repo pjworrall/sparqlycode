@@ -1,0 +1,11 @@
+# This finds abstract classes that have no abstract methods in them.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:isAbstract true .
+FILTER NOT EXISTS {?class java:method ?method .
+?method java:isAbstract true} . 
+}

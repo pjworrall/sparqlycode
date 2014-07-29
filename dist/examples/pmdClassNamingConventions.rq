@@ -1,0 +1,11 @@
+# Finds classes with a name starting with a lower case letter.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class ?className
+WHERE {
+?class a java:Class .
+?class rdfs:label ?className
+FILTER (REGEX (?className,  "^[a-z]"))
+}

@@ -1,0 +1,9 @@
+# Finds classes that extend Java.lang.Error
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:extends <http://www.interition.net/sparqlycode/id/java/lang/Error>
+}

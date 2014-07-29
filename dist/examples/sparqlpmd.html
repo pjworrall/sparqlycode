@@ -1,0 +1,791 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<title>Sparqlycode PMD test equivalents - Codeleaks</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="DC.Title" content="Sparqlycode PMD test equivalents - Codeleaks" />
+
+	<meta name="description" content="wiki for Codeleaks product set - Eg SPARQLYCODE" />
+
+
+	<link rel="start" title="Codeleaks" href="/interwiki/codeleaks/Codeleaks" />
+	<link rel="home" title="Codeleaks" href="/interwiki/codeleaks/Codeleaks" />
+
+	<link href="/interwiki/codeleaks/jamwiki.css" type="text/css" rel="stylesheet" />
+</head>
+<body style="background:none">
+
+<h1 id="contents-header">Sparqlycode PMD test equivalents</h1>
+
+
+
+
+	
+		
+			<div id="content-article">
+			
+			
+			
+			<table id="toc">
+<tr>
+<th>Contents <span class="toctoggle hidden" id="toggle-link-wrapper">[<a id="toggle-link" href="#">hide</a>]</span></th>
+</tr>
+<tr>
+<td id="toc-content">
+<ul>
+<li><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a><ul>
+<li><a href="#OverrideBothEqualsAndHashcode"><span class="tocnumber">1.1</span> <span class="toctext">OverrideBothEqualsAndHashcode</span></a></li>
+<li><a href="#ExtendsObject"><span class="tocnumber">1.2</span> <span class="toctext">ExtendsObject</span></a></li>
+<li><a href="#ProperCloneImplementation"><span class="tocnumber">1.3</span> <span class="toctext">ProperCloneImplementation</span></a></li>
+<li><a href="#CloneMethodMustImplementCloneable"><span class="tocnumber">1.4</span> <span class="toctext">CloneMethodMustImplementCloneable</span></a></li>
+<li><a href="#ExcessiveParameterList"><span class="tocnumber">1.5</span> <span class="toctext">ExcessiveParameterList</span></a></li>
+<li><a href="#ExcessivePublicCount"><span class="tocnumber">1.6</span> <span class="toctext">ExcessivePublicCount</span></a></li>
+<li><a href="#TooManyFields"><span class="tocnumber">1.7</span> <span class="toctext">TooManyFields</span></a></li>
+<li><a href="#TooManyMethods"><span class="tocnumber">1.8</span> <span class="toctext">TooManyMethods</span></a></li>
+<li><a href="#AtLeastOneConstructor"><span class="tocnumber">1.9</span> <span class="toctext">AtLeastOneConstructor</span></a></li>
+<li><a href="#DontImportSun"><span class="tocnumber">1.10</span> <span class="toctext">DontImportSun</span></a></li>
+<li><a href="#AvoidPrefixingMethodParameters"><span class="tocnumber">1.11</span> <span class="toctext">AvoidPrefixingMethodParameters</span></a></li>
+<li><a href="#UseObjectForClearerAPI"><span class="tocnumber">1.12</span> <span class="toctext">UseObjectForClearerAPI</span></a></li>
+<li><a href="#ExcessiveImports"><span class="tocnumber">1.13</span> <span class="toctext">ExcessiveImports</span></a></li>
+<li><a href="#UseUtilityClass"><span class="tocnumber">1.14</span> <span class="toctext">UseUtilityClass</span></a></li>
+<li><a href="#FinalFieldCouldBeStatic"><span class="tocnumber">1.15</span> <span class="toctext">FinalFieldCouldBeStatic</span></a></li>
+<li><a href="#AvoidProtectedFieldInFinalClass"><span class="tocnumber">1.16</span> <span class="toctext">AvoidProtectedFieldInFinalClass</span></a></li>
+<li><a href="#MissingStaticMethodInNonInstantiatableClass"><span class="tocnumber">1.17</span> <span class="toctext">MissingStaticMethodInNonInstantiatableClass</span></a></li>
+<li><a href="#AvoidSynchronizedAtMethodLevel"><span class="tocnumber">1.18</span> <span class="toctext">AvoidSynchronizedAtMethodLevel</span></a></li>
+<li><a href="#AbstractClassWithoutAbstractMethod"><span class="tocnumber">1.19</span> <span class="toctext">AbstractClassWithoutAbstractMethod</span></a></li>
+<li><a href="#AvoidConstantsInterface"><span class="tocnumber">1.20</span> <span class="toctext">AvoidConstantsInterface</span></a></li>
+<li><a href="#ClassWithOnlyPrivateConstructorsShouldBeFinal"><span class="tocnumber">1.21</span> <span class="toctext">ClassWithOnlyPrivateConstructorsShouldBeFinal</span></a></li>
+<li><a href="#AbstractClassWithoutAnyMethod"><span class="tocnumber">1.22</span> <span class="toctext">AbstractClassWithoutAnyMethod</span></a></li>
+<li><a href="#UseVarargs"><span class="tocnumber">1.23</span> <span class="toctext">UseVarargs</span></a></li>
+<li><a href="#FieldDeclarationsShouldBeAtStartOfClass"><span class="tocnumber">1.24</span> <span class="toctext">FieldDeclarationsShouldBeAtStartOfClass</span></a></li>
+<li><a href="#AvoidProtectedMethodInFinalClassNotExtending"><span class="tocnumber">1.25</span> <span class="toctext">AvoidProtectedMethodInFinalClassNotExtending</span></a></li>
+<li><a href="#FinalizeOverloaded"><span class="tocnumber">1.26</span> <span class="toctext">FinalizeOverloaded</span></a></li>
+<li><a href="#FinalizeShouldBeProtected"><span class="tocnumber">1.27</span> <span class="toctext">FinalizeShouldBeProtected</span></a></li>
+<li><a href="#RemoteSessionInterfaceNamingConvention"><span class="tocnumber">1.28</span> <span class="toctext">RemoteSessionInterfaceNamingConvention</span></a></li>
+<li><a href="#LocalInterfaceSessionNamingConvention"><span class="tocnumber">1.29</span> <span class="toctext">LocalInterfaceSessionNamingConvention</span></a></li>
+<li><a href="#LocalHomeNamingConvention"><span class="tocnumber">1.30</span> <span class="toctext">LocalHomeNamingConvention</span></a></li>
+<li><a href="#RemoteInterfaceNamingConvention"><span class="tocnumber">1.31</span> <span class="toctext">RemoteInterfaceNamingConvention</span></a></li>
+<li><a href="#StaticEJBFieldShouldBeFinal"><span class="tocnumber">1.32</span> <span class="toctext">StaticEJBFieldShouldBeFinal</span></a></li>
+<li><a href="#DoNotUseThreads"><span class="tocnumber">1.33</span> <span class="toctext">DoNotUseThreads</span></a></li>
+<li><a href="#BeanMembersShouldSerialize"><span class="tocnumber">1.34</span> <span class="toctext">BeanMembersShouldSerialize</span></a></li>
+<li><a href="#MissingSerialVersionUID"><span class="tocnumber">1.35</span> <span class="toctext">MissingSerialVersionUID</span></a></li>
+<li><a href="#JUnitStaticSuite"><span class="tocnumber">1.36</span> <span class="toctext">JUnitStaticSuite</span></a></li>
+<li><a href="#JUnitSpelling"><span class="tocnumber">1.37</span> <span class="toctext">JUnitSpelling</span></a></li>
+<li><a href="#JUnit4TestShouldUseBeforeAnnotation"><span class="tocnumber">1.38</span> <span class="toctext">JUnit4TestShouldUseBeforeAnnotation</span></a></li>
+<li><a href="#JUnit4TestShouldUseAfterAnnotation"><span class="tocnumber">1.39</span> <span class="toctext">JUnit4TestShouldUseAfterAnnotation</span></a></li>
+<li><a href="#JUnit4TestShouldUseTestAnnotation"><span class="tocnumber">1.40</span> <span class="toctext">JUnit4TestShouldUseTestAnnotation</span></a></li>
+<li><a href="#JUnit4SuitesShouldUseSuiteAnnotation"><span class="tocnumber">1.41</span> <span class="toctext">JUnit4SuitesShouldUseSuiteAnnotation</span></a></li>
+<li><a href="#TestClassWithoutTestCases"><span class="tocnumber">1.42</span> <span class="toctext">TestClassWithoutTestCases</span></a></li>
+<li><a href="#ProperLogger"><span class="tocnumber">1.43</span> <span class="toctext">ProperLogger</span></a></li>
+<li><a href="#MoreThanOneLogger"><span class="tocnumber">1.44</span> <span class="toctext">MoreThanOneLogger</span></a></li>
+<li><a href="#LoggerIsNotStaticFinal"><span class="tocnumber">1.45</span> <span class="toctext">LoggerIsNotStaticFinal</span></a></li>
+<li><a href="#ShortMethodName"><span class="tocnumber">1.46</span> <span class="toctext">ShortMethodName</span></a></li>
+<li><a href="#MethodNamingConventions"><span class="tocnumber">1.47</span> <span class="toctext">MethodNamingConventions</span></a></li>
+<li><a href="#ClassNamingConventions"><span class="tocnumber">1.48</span> <span class="toctext">ClassNamingConventions</span></a></li>
+<li><a href="#AbstractNaming"><span class="tocnumber">1.49</span> <span class="toctext">AbstractNaming</span></a></li>
+<li><a href="#AvoidDollarSigns"><span class="tocnumber">1.50</span> <span class="toctext">AvoidDollarSigns</span></a></li>
+<li><a href="#MethodWithSameNameAsEnclosingClass"><span class="tocnumber">1.51</span> <span class="toctext">MethodWithSameNameAsEnclosingClass</span></a></li>
+<li><a href="#SuspiciousHashcodeMethodName"><span class="tocnumber">1.52</span> <span class="toctext">SuspiciousHashcodeMethodName</span></a></li>
+<li><a href="#SuspiciousConstantFieldName"><span class="tocnumber">1.53</span> <span class="toctext">SuspiciousConstantFieldName</span></a></li>
+<li><a href="#SuspiciousEqualsMethodName"><span class="tocnumber">1.54</span> <span class="toctext">SuspiciousEqualsMethodName</span></a></li>
+<li><a href="#AvoidFieldNameMatchingTypeName"><span class="tocnumber">1.55</span> <span class="toctext">AvoidFieldNameMatchingTypeName</span></a></li>
+<li><a href="#AvoidFieldNameMatchingMethodName"><span class="tocnumber">1.56</span> <span class="toctext">AvoidFieldNameMatchingMethodName</span></a></li>
+<li><a href="#NoPackage"><span class="tocnumber">1.57</span> <span class="toctext">NoPackage</span></a></li>
+<li><a href="#PackageCase"><span class="tocnumber">1.58</span> <span class="toctext">PackageCase</span></a></li>
+<li><a href="#ShortClassName"><span class="tocnumber">1.59</span> <span class="toctext">ShortClassName</span></a></li>
+<li><a href="#GenericsNaming"><span class="tocnumber">1.60</span> <span class="toctext">GenericsNaming</span></a></li>
+<li><a href="#SignatureDeclareThrowsException"><span class="tocnumber">1.61</span> <span class="toctext">SignatureDeclareThrowsException</span></a></li>
+<li><a href="#DoNotExtendJavaLangError"><span class="tocnumber">1.62</span> <span class="toctext">DoNotExtendJavaLangError</span></a></li>
+<li><a href="#UnnecessaryFinalModifier"><span class="tocnumber">1.63</span> <span class="toctext">UnnecessaryFinalModifier</span></a></li>
+</ul></li>
+</ul>
+</td>
+</tr>
+</table>
+<script type="text/javascript">
+JAMWiki.UI.removeClass(document.getElementById("toggle-link-wrapper"), "hidden");
+JAMWiki.UI.initializeTocToggle("hide", "show");
+</script>
+<h1><span id="Introduction">Introduction</span></h1>
+<p>One of the advantages of Sparqlycode we would like to offer is an easier to use and more extensible programmatic API for quering code and it's supporting artifacts.  <a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1">PMD</a> is a popular test suite based on the AST and xPath queries.  The following tests can be replicated in version 0.0.1a.</p>
+<h2><span id="OverrideBothEqualsAndHashcode">OverrideBothEqualsAndHashcode</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/basic.html#OverrideBothEqualsAndHashcode">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/basic.html#OverrideBothEqualsAndHashcode</a></p>
+<p>Answer <a class="externallink" rel="nofollow" href="http://interition.blogspot.co.uk/2014/06/replicating-pmd-overridebothequalsandha.html">http://interition.blogspot.co.uk/2014/06/replicating-pmd-overridebothequalsandha.html</a> .</p>
+<p><br /></p>
+<h2><span id="ExtendsObject">ExtendsObject</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/basic.html#ExtendsObject">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/basic.html#ExtendsObject</a></p>
+<p>Answer....</p>
+<p>hmm. this is an interesting one actually.  In sparqlycode all Classes explicitly get a java:extends relationship to Object (<a class="externallink" rel="nofollow" href="http://www.interition.net/sparqlycode/id/java/lang/Object">http://www.interition.net/sparqlycode/id/java/lang/Object</a>) . So we cannot differentiate between those that have it in the code syntax and those that have it resolved implicitly.</p>
+<p>eg.</p>
+<pre>
+ 
+
+# This finds all classes that unnecessarily extend Object
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT * WHERE
+ {  
+    ?classes java:extends ?e
+    
+    #&lt;http://www.interition.net/sparqlycode/id/java/lang/Object&gt;  .
+    
+} LIMIT 100
+</pre>
+<p>Open to ideas :-)</p>
+<h2><span id="ProperCloneImplementation">ProperCloneImplementation</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/clone.html#ProperCloneImplementation">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/clone.html#ProperCloneImplementation</a></p>
+<p>Another interesting one.  The test is checking the clone is done by super.clone() .  The xpath is a bit difficult to understand but the key points I think it is making are:</p>
+<ul>
+<li>there should be no parameters required for the clone method</li>
+<li>the &quot;ancestor&quot; should be involved</li>
+</ul>
+<p>The &quot;ancestor&quot; is referring to the superclass. We can determine the superclass from java:extends but I am not sure what we do with it.</p>
+<h2><span id="CloneMethodMustImplementCloneable">CloneMethodMustImplementCloneable</span></h2>
+<p>This was straight forward.</p>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/clone.html#CloneMethodMustImplementCloneable">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/clone.html#CloneMethodMustImplementCloneable</a></p>
+<pre>
+# This finds all classes that provide a clone method but do not implement Cloneable
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT ?classes  WHERE
+ {  
+    ?classes java:method ?method .
+    ?method rdfs:label &quot;clone&quot; .
+    
+    minus {
+      ?classes java:implements &lt;http://www.interition.net/sparqlycode/id/java/lang/Cloneable&gt; .
+    }
+    
+} LIMIT 100
+</pre>
+<h2><span id="ExcessiveParameterList">ExcessiveParameterList</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#ExcessiveParameterList">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#ExcessiveParameterList</a></p>
+<pre>
+# This finds methods and their respective classes with an excessive number of parameters. Eg 5
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT ?class ?method (count(?parameter) as ?totalParameters) WHERE
+ {  
+    ?method java:parameter ?parameter .
+    ?class java:method ?method .
+}
+group by ?class ?method
+HAVING (?totalParameters &gt; 5)
+limit 100
+</pre>
+<h2><span id="ExcessivePublicCount">ExcessivePublicCount</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#ExcessivePublicCount">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#ExcessivePublicCount</a></p>
+<p>Two queries. First is to look at public methods. The second, (TODO), looks at public fields.</p>
+<pre>
+
+# This finds classes with an excessive number of public methods . Eg &gt; 10
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT ?class (count(?method) as ?totalPublicMethods) WHERE
+
+ {  
+    ?class java:method ?method .
+    ?method java:access &quot;Public&quot; .
+
+}
+group by ?class
+having (?totalPublicMethods &gt; 10)
+limit 100
+
+</pre>
+<h2><span id="TooManyFields">TooManyFields</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#TooManyFields">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#TooManyFields</a></p>
+<pre>
+# This finds classes with an excessive number of public methods . Eg &gt; 10
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT ?class (count(?field) as ?totalPublicFields) WHERE
+
+ {  
+    ?class java:field ?field .
+    ?field java:access &quot;Public&quot; .
+
+}
+group by ?class
+having (?totalPublicFields &gt; 10)
+limit 100
+</pre>
+<h2><span id="TooManyMethods">TooManyMethods</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#TooManyMethods">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/codesize.html#TooManyMethods</a></p>
+<pre>
+# This finds classes with an excessive number of methods . Eg &gt; 10
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX xsd: &lt;http://www.example.org/&gt;
+
+SELECT ?class (count(?method) as ?totalMethods) WHERE
+
+ {  
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName .
+    filter (regex(?methodName,&quot;^get|^set|^is&quot;,&quot;i&quot; ))
+
+}
+group by ?class
+having (?totalMethods &gt; 10)
+limit 100
+</pre>
+<h2><span id="AtLeastOneConstructor">AtLeastOneConstructor</span></h2>
+<p>This one cannot be done at the moment as sparqlycode doesn't distinguish between default and explicitly declared constructors.</p>
+<h2><span id="DontImportSun">DontImportSun</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/controversial.html#DontImportSun">http://pmd.sourceforge.net/pmd-4.3/rules/controversial.html#DontImportSun</a></p>
+<p><u><b>NOTE:</b></u> This query hasn't been tested due to the lack of support of import statements in sparqlycode.</p>
+<pre>
+# Finds classes that import any sun utilities (sun.*).
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class ?imports
+WHERE {
+?class a java:Class .
+?class java:imports ?imports
+FILTER (STRSTARTS(STR(?imports), &quot;http://www.interition.net/sparqlycode/id/sun/&quot;))
+}
+</pre>
+<h2><span id="AvoidPrefixingMethodParameters">AvoidPrefixingMethodParameters</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.0.1/rules/java/controversial.html#AvoidPrefixingMethodParameters">http://pmd.sourceforge.net/pmd-5.0.1/rules/java/controversial.html#AvoidPrefixingMethodParameters</a></p>
+<pre>
+# Finds methods with parameters prefixed with 'in' or 'out'.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class ?method ?paramName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method java:parameter ?param .
+?param java:name ?paramName .
+FILTER (REGEX (?paramName, &quot;^in[A-Z].*&quot;) || REGEX (?paramName, &quot;^out[A-Z].*&quot;) || REGEX (?paramName, &quot;^in$','^out$&quot;))
+}
+</pre>
+<h2><span id="UseObjectForClearerAPI">UseObjectForClearerAPI</span></h2>
+<h2><span id="ExcessiveImports">ExcessiveImports</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/coupling.html#ExcessiveImports">http://pmd.sourceforge.net/pmd-4.3/rules/coupling.html#ExcessiveImports</a></p>
+<p><u><b>NOTE:</b></u> This query hasn't been tested due to the lack of support of import statements in sparqlycode.</p>
+<pre>
+# Finds methods with over 30 import statements.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class (count(?imports) as ?totalImports)
+WHERE {
+?class a java:Class .
+?class java:imports ?imports .
+}
+GROUP BY ?class
+HAVING (?totalImports &gt; 30)
+ORDER BY DESC (?totalImports)
+</pre>
+<h2><span id="UseUtilityClass">UseUtilityClass</span></h2>
+<h2><span id="FinalFieldCouldBeStatic">FinalFieldCouldBeStatic</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/design.html#FinalFieldCouldBeStatic">http://pmd.sourceforge.net/pmd-4.3/rules/design.html#FinalFieldCouldBeStatic</a></p>
+<pre>
+# This finds classes with final field declarations that aren't static
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class ?field WHERE
+
+ {
+    ?class java:field ?field .
+    ?field java:isFinal true .
+    FILTER NOT EXISTS {?field java:isStatic true}
+} 
+</pre>
+<p><br /></p>
+<h2><span id="AvoidProtectedFieldInFinalClass">AvoidProtectedFieldInFinalClass</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.0.5/rules/java/design.html#AvoidProtectedFieldInFinalClass">http://pmd.sourceforge.net/pmd-5.0.5/rules/java/design.html#AvoidProtectedFieldInFinalClass</a></p>
+<pre>
+# This finds protected fields declared in final classes. These fields should not be protected as a final class cannot have subclasses.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class ?field
+WHERE {
+?class a java:Class .
+?class java:isFinal true .
+?class java:field ?field .
+?field java:access &quot;Protected&quot; .
+}
+</pre>
+<h2><span id="MissingStaticMethodInNonInstantiatableClass">MissingStaticMethodInNonInstantiatableClass</span></h2>
+<p>This one is interesting because the xpath is quite complicated but I think the sparql should be simple</p>
+<p>Cannot do at the moment as Constructors do not have enough information in the model..</p>
+<p><a class="externallink" rel="nofollow" href="http://www.interition.net:3030/browse/COD-159">http://www.interition.net:3030/browse/COD-159</a></p>
+<h2><span id="AvoidSynchronizedAtMethodLevel">AvoidSynchronizedAtMethodLevel</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/design.html#AvoidSynchronizedAtMethodLevel">http://pmd.sourceforge.net/pmd-4.3/rules/design.html#AvoidSynchronizedAtMethodLevel</a></p>
+<pre>
+# Finds methods that are declared to be synchronized. Synchronization should be used at block-level.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method java:isSynchronized true .
+?method rdfs:label ?methodName .
+}
+</pre>
+<h2><span id="AbstractClassWithoutAbstractMethod">AbstractClassWithoutAbstractMethod</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/snapshot/rules/java/design.html#AbstractClassWithoutAbstractMethod">http://pmd.sourceforge.net/snapshot/rules/java/design.html#AbstractClassWithoutAbstractMethod</a></p>
+<pre>
+# This finds abstract classes that have no abstract methods in them.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:isAbstract true .
+FILTER NOT EXISTS {?class java:method ?method .
+?method java:isAbstract true} .
+}
+</pre>
+<h2><span id="AvoidConstantsInterface">AvoidConstantsInterface</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/design.html#AvoidConstantsInterface">http://pmd.sourceforge.net/pmd-4.3/rules/design.html#AvoidConstantsInterface</a></p>
+<pre>
+# Finds any interface that only has constants in it, and no method declarations.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?interface
+WHERE {
+?interface a java:Interface .
+?interface java:field ?field .
+?field java:isStatic true .
+?field java:isFinal true .
+?field java:access &quot;Public&quot; .
+FILTER NOT EXISTS {?interface java:method ?method} .
+}
+GROUP BY ?interface
+HAVING ( COUNT (?field) &gt; 0)
+</pre>
+<h2><span id="ClassWithOnlyPrivateConstructorsShouldBeFinal">ClassWithOnlyPrivateConstructorsShouldBeFinal</span></h2>
+<p>No point in doing this without the proper constructor support yet.</p>
+<h2><span id="AbstractClassWithoutAnyMethod">AbstractClassWithoutAnyMethod</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/snapshot/rules/java/design.html#AbstractClassWithoutAnyMethod">http://pmd.sourceforge.net/snapshot/rules/java/design.html#AbstractClassWithoutAnyMethod</a></p>
+<p><u><b>NOTE:</b></u> this test <u>excludes</u> investigating constructors. It only checks if the class has any normal methods declared.</p>
+<pre>
+# This finds abstract classes that have no methods in them whatsoever.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class (count (?method) as ?totalMethods)
+WHERE {
+?class a java:Class .
+?class java:isAbstract true .
+FILTER NOT EXISTS {?class java:method ?method} .
+}  group by ?class 
+</pre>
+<h2><span id="UseVarargs">UseVarargs</span></h2>
+<p>This one is in here because it introduces a new concept we should support and be aware of</p>
+<p><br /></p>
+<h2><span id="FieldDeclarationsShouldBeAtStartOfClass">FieldDeclarationsShouldBeAtStartOfClass</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.0.0/rules/java/design.html#FieldDeclarationsShouldBeAtStartOfClass">http://pmd.sourceforge.net/pmd-5.0.0/rules/java/design.html#FieldDeclarationsShouldBeAtStartOfClass</a></p>
+<p><u><b>NOTE:</b></u> This query does not take constructors into account yet.</p>
+<pre>
+# This finds fields declared somewhere other than the top of the class.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT DISTINCT ?class ?fieldName ?fieldLN
+WHERE {
+?class a java:Class .
+?class java:field ?field .
+?field java:lineNumber ?fieldLN .
+?field rdfs:label ?fieldName .
+?class java:method ?method .
+?method java:lineNumber ?methodLN .
+OPTIONAL {
+           ?class java:innerClassOf ?parentClass .
+           ?class java:lineNumber ?innerClassLN .
+         }
+FILTER (?fieldLN &gt; ?methodLN || ?fieldLN &gt; ?innerClassLN)
+}
+</pre>
+<h2><span id="AvoidProtectedMethodInFinalClassNotExtending">AvoidProtectedMethodInFinalClassNotExtending</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/design.html#AvoidProtectedMethodInFinalClassNotExtending">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/design.html#AvoidProtectedMethodInFinalClassNotExtending</a></p>
+<pre>
+# Finds protected methods in final classes that don't extend other classes with protected methods.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:extends &lt;http://www.interition.net/sparqlycode/id/java/lang/Object&gt; .
+?class java:isFinal true .
+?class java:method ?method .
+?method java:access &quot;Protected&quot; .
+?method rdfs:label ?methodName .
+}
+</pre>
+<h2><span id="FinalizeOverloaded">FinalizeOverloaded</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/finalizers.html#FinalizeOverloaded">http://pmd.sourceforge.net/pmd-4.3/rules/finalizers.html#FinalizeOverloaded</a></p>
+<pre>
+# This finds any overloaded instances of the void finalize() method. It should not have any parameters.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX sc: &lt;http://www.interition.net/sparqlycode/id/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class (COUNT (?parameter) as ?totalParameters)
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label &quot;finalize&quot; .
+?method java:returns sc:void .
+?method java:parameter ?parameter .
+}
+GROUP BY ?class
+HAVING (?totalParameters &gt; 0)
+</pre>
+<h2><span id="FinalizeShouldBeProtected">FinalizeShouldBeProtected</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/snapshot/rules/java/finalizers.html#FinalizeShouldBeProtected">http://pmd.sourceforge.net/snapshot/rules/java/finalizers.html#FinalizeShouldBeProtected</a></p>
+<pre>
+# Checks if there is a public overriding instance of the finalize() method. These should be protected.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX sc: &lt;http://www.interition.net/sparqlycode/id/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label &quot;finalize&quot; .
+?method java:returns sc:void .
+?method java:access &quot;Public&quot; .
+FILTER NOT EXISTS {?method java:parameter ?parameter} .
+}
+</pre>
+<h2><span id="RemoteSessionInterfaceNamingConvention">RemoteSessionInterfaceNamingConvention</span></h2>
+<h2><span id="LocalInterfaceSessionNamingConvention">LocalInterfaceSessionNamingConvention</span></h2>
+<h2><span id="LocalHomeNamingConvention">LocalHomeNamingConvention</span></h2>
+<h2><span id="RemoteInterfaceNamingConvention">RemoteInterfaceNamingConvention</span></h2>
+<h2><span id="StaticEJBFieldShouldBeFinal">StaticEJBFieldShouldBeFinal</span></h2>
+<h2><span id="DoNotUseThreads">DoNotUseThreads</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/j2ee.html#DoNotUseThreads">http://pmd.sourceforge.net/pmd-4.3/rules/j2ee.html#DoNotUseThreads</a></p>
+<pre>
+# Finds classes that extend Thread or implement Runnable.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class
+WHERE {
+               {?class java:implements &lt;http://www.interition.net/sparqlycode/id/java/lang/Runnable&gt; .}
+               UNION 
+               {?class java:extends &lt;http://www.interition.net/sparqlycode/id/java/lang/Thread&gt; . }
+}
+</pre>
+<h2><span id="BeanMembersShouldSerialize">BeanMembersShouldSerialize</span></h2>
+<h2><span id="MissingSerialVersionUID">MissingSerialVersionUID</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/javabeans.html#MissingSerialVersionUID">http://pmd.sourceforge.net/pmd-4.3/rules/javabeans.html#MissingSerialVersionUID</a></p>
+<pre>
+# Checks if a class that is implementing java.io.Serializable has the field SerialVersionUID declared.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:implements &lt;http://www.interition.net/sparqlycode/id/java/io/Serializable&gt; .
+?class java:field ?field .
+        FILTER NOT EXISTS {
+                ?field java:isPrivate true.
+                ?field java:isStatic true .
+                ?field java:isFinal true .
+                ?field rdfs:label &quot;serialVersionUID&quot;
+        }
+}
+</pre>
+<h2><span id="JUnitStaticSuite">JUnitStaticSuite</span></h2>
+<h2><span id="JUnitSpelling">JUnitSpelling</span></h2>
+<h2><span id="JUnit4TestShouldUseBeforeAnnotation">JUnit4TestShouldUseBeforeAnnotation</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseBeforeAnnotation">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseBeforeAnnotation</a></p>
+<pre>
+# Finds any class that uses a setUp method without the @Before annotation.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label &quot;setUp&quot; .
+FILTER NOT EXISTS {?method java:hasAnnotation &lt;http://www.interition.net/sparqlycode/id/org/junit/Before&gt;} .
+}
+</pre>
+<h2><span id="JUnit4TestShouldUseAfterAnnotation">JUnit4TestShouldUseAfterAnnotation</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseAfterAnnotation">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseAfterAnnotation</a></p>
+<pre>
+# Finds any class that uses a tearDown method without the @After annotation.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label &quot;tearDown&quot; .
+FILTER NOT EXISTS {?method java:hasAnnotation &lt;http://www.interition.net/sparqlycode/id/org/junit/After&gt;} .
+</pre>
+<p><br /></p>
+<h2><span id="JUnit4TestShouldUseTestAnnotation">JUnit4TestShouldUseTestAnnotation</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseTestAnnotation">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/migrating.html#JUnit4TestShouldUseTestAnnotation</a></p>
+<pre>
+# Finds any class that uses a method starting with the wort 'test' but not using the @Test annotation.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label ?methodName
+FILTER (STRSTARTS(STR(?methodName), &quot;test&quot;))
+FILTER NOT EXISTS {?method java:hasAnnotation &lt;http://www.interition.net/sparqlycode/id/org/junit/Test&gt; .}
+}
+</pre>
+<h2><span id="JUnit4SuitesShouldUseSuiteAnnotation">JUnit4SuitesShouldUseSuiteAnnotation</span></h2>
+<h2><span id="TestClassWithoutTestCases">TestClassWithoutTestCases</span></h2>
+<h2><span id="ProperLogger">ProperLogger</span></h2>
+<h2><span id="MoreThanOneLogger">MoreThanOneLogger</span></h2>
+<h2><span id="LoggerIsNotStaticFinal">LoggerIsNotStaticFinal</span></h2>
+<h2><span id="ShortMethodName">ShortMethodName</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/naming.html#ShortMethodName">http://pmd.sourceforge.net/pmd-4.3/rules/naming.html#ShortMethodName</a></p>
+<pre>
+# Finds methods with less than 3-character names.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label ?methodName .
+FILTER (REGEX (?methodName,  &quot;^.{0,2}$&quot;))
+}
+</pre>
+<h2><span id="MethodNamingConventions">MethodNamingConventions</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#MethodNamingConventions">http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#MethodNamingConventions</a></p>
+<pre>
+# Finds methods starting with an upper case letter or containing underscores.
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label ?methodName .
+FILTER (REGEX (?methodName,  &quot;^[A-Z]&quot;) || REGEX (?methodName, &quot;.[_]&quot;))
+} 
+</pre>
+<h2><span id="ClassNamingConventions">ClassNamingConventions</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#ClassNamingConventions">http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#ClassNamingConventions</a></p>
+<pre>
+# Finds classes with a name starting with a lower case letter.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?className
+WHERE {
+?class a java:Class .
+?class rdfs:label ?className
+FILTER (REGEX (?className,  &quot;^[a-z]&quot;))
+}
+</pre>
+<h2><span id="AbstractNaming">AbstractNaming</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#AbstractNaming">http://pmd.sourceforge.net/pmd-4.2.6/rules/naming.html#AbstractNaming</a></p>
+<pre>
+# Finds abstract classes whose name does not start with 'Abstract'.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:isAbstract true .
+?class rdfs:label ?className .
+FILTER  (REGEX (?className,  &quot;^(?!Abstract).+&quot;))
+}
+</pre>
+<h2><span id="AvoidDollarSigns">AvoidDollarSigns</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.2.5/rules/naming.html#AvoidDollarSigns">http://pmd.sourceforge.net/pmd-4.2.5/rules/naming.html#AvoidDollarSigns</a></p>
+<pre>
+# Find classes or interfaces with class / method / field including the '$' sign.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?fieldName ?methodName
+WHERE {
+{
+?class a java:Class .
+?class rdfs:label ?className .
+OPTIONAL {
+    ?class java:field ?field .
+    ?class rdfs:label ?fieldName .
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName .
+    }
+FILTER (REGEX(?className, &quot;.[$]&quot;) || REGEX(?fieldName, &quot;.[$]&quot;) || REGEX(?methodName, &quot;.[$]&quot;))
+}
+UNION {
+?class a java:Interface .
+?class rdfs:label ?interfaceName .
+OPTIONAL {
+    ?class java:field ?field .
+    ?field rdfs:label ?fieldName .
+    ?class java:method ?method .
+    ?method rdfs:label ?methodName .
+    }
+FILTER (REGEX(?interfaceName, &quot;.[$]&quot;) || REGEX(?fieldName, &quot;.[$]&quot;) || REGEX(?methodName, &quot;.[$]&quot;))
+}
+}
+</pre>
+<h2><span id="MethodWithSameNameAsEnclosingClass">MethodWithSameNameAsEnclosingClass</span></h2>
+<h2><span id="SuspiciousHashcodeMethodName">SuspiciousHashcodeMethodName</span></h2>
+<h2><span id="SuspiciousConstantFieldName">SuspiciousConstantFieldName</span></h2>
+<h2><span id="SuspiciousEqualsMethodName">SuspiciousEqualsMethodName</span></h2>
+<h2><span id="AvoidFieldNameMatchingTypeName">AvoidFieldNameMatchingTypeName</span></h2>
+<h2><span id="AvoidFieldNameMatchingMethodName">AvoidFieldNameMatchingMethodName</span></h2>
+<h2><span id="NoPackage">NoPackage</span></h2>
+<h2><span id="PackageCase">PackageCase</span></h2>
+<h2><span id="ShortClassName">ShortClassName</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.1.1/rules/java/naming.html#ShortClassName">http://pmd.sourceforge.net/pmd-5.1.1/rules/java/naming.html#ShortClassName</a></p>
+<pre>
+# Finds classes with less than 5 chararcters in their name.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class rdfs:label ?className .
+FILTER  (REGEX (?className,  &quot;^.{0,4}$&quot;))
+}
+</pre>
+<h2><span id="GenericsNaming">GenericsNaming</span></h2>
+<p>Nice juicy one !  we have to have got a good command of our model applied to Generics to do this.</p>
+<p><br /></p>
+<h2><span id="SignatureDeclareThrowsException">SignatureDeclareThrowsException</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/strictexception.html#SignatureDeclareThrowsException">http://pmd.sourceforge.net/pmd-4.3/rules/strictexception.html#SignatureDeclareThrowsException</a></p>
+<pre>
+# Finds any method that throws java.lang.Exception.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label ?methodName .
+?method java:throws &lt;http://www.interition.net/sparqlycode/id/java/lang/Exception&gt; .
+}
+</pre>
+<h2><span id="DoNotExtendJavaLangError">DoNotExtendJavaLangError</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-4.3/rules/strictexception.html#DoNotExtendJavaLangError">http://pmd.sourceforge.net/pmd-4.3/rules/strictexception.html#DoNotExtendJavaLangError</a></p>
+<pre>
+# Finds classes that extend Java.lang.Error
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:extends &lt;http://www.interition.net/sparqlycode/id/java/lang/Error&gt;
+}
+</pre>
+<h2><span id="UnnecessaryFinalModifier">UnnecessaryFinalModifier</span></h2>
+<p><a class="externallink" rel="nofollow" href="http://pmd.sourceforge.net/pmd-5.0.5/rules/java/unnecessary.html#UnnecessaryFinalModifier">http://pmd.sourceforge.net/pmd-5.0.5/rules/java/unnecessary.html#UnnecessaryFinalModifier</a></p>
+<pre>
+# Finds methods explicitly declared final inside final classes.
+
+PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:isFinal true .
+?class java:method ?method .
+?method java:isFinal true .
+?method rdfs:label ?methodName .
+}
+</pre>
+<p><br /></p>
+<hr />
+<p>Revision 1237</p>
+<p><br /></p>
+			</div>
+			<div class="clear"></div>
+			
+		
+	
+	
+
+
+
+
+
+	
+
+
+	
+
+
+
+</body>
+</html>

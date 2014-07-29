@@ -1,0 +1,16 @@
+# This finds any overloaded instances of the void finalize() method. It should not have any parameters.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX sc: <http://www.interition.net/sparqlycode/id/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class (count (?parameter) as ?totalParameters)
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label "finalize" .
+?method java:returns sc:void .
+?method java:parameter ?parameter .
+} 
+group by ?class
+having (?totalParameters > 0)

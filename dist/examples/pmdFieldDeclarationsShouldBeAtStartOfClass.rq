@@ -1,0 +1,19 @@
+# This finds fields declared somewhere other than the top of the class.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT ?class ?fieldName ?fieldLN
+WHERE {
+?class a java:Class .
+?class java:field ?field .
+?field java:lineNumber ?fieldLN .
+?field rdfs:label ?fieldName .
+?class java:method ?method .
+?method java:lineNumber ?methodLN .
+OPTIONAL {
+           ?class java:innerClassOf ?parentClass .
+           ?class java:lineNumber ?innerClassLN .
+         }
+FILTER (?fieldLN > ?methodLN || ?fieldLN > ?innerClassLN) 
+}

@@ -1,0 +1,12 @@
+# Finds methods starting with an upper case letter or containing underscores.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class ?methodName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label ?methodName .
+FILTER (REGEX (?methodName,  "^[A-Z]") || REGEX (?methodName, ".[_]"))
+} 

@@ -1,0 +1,11 @@
+# This finds protected fields declared in final classes. These fields should not be protected as a final class cannot have subclasses.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class ?field
+WHERE {
+?class a java:Class .
+?class java:isFinal true .
+?class java:field ?field .
+?field java:access "Protected" .
+} 

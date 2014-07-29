@@ -1,0 +1,15 @@
+# Checks if there is a public overriding instance of the finalize() method. These should be protected.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX sc: <http://www.interition.net/sparqlycode/id/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method rdfs:label "finalize" .
+?method java:returns sc:void .
+?method java:access "Public" .
+FILTER NOT EXISTS {?method java:parameter ?parameter} .
+} 

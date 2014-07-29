@@ -1,0 +1,8 @@
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class ?method ?p ?o
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method ?p ?o
+}

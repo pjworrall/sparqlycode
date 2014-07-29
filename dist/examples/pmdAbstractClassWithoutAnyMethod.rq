@@ -1,0 +1,11 @@
+# This finds abstract classes that have no methods in them whatsoever.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class (count (?method) as ?totalMethods)
+WHERE {
+?class a java:Class .
+?class java:isAbstract true .
+FILTER NOT EXISTS {?class java:method ?method} .
+FILTER NOT EXISTS {?class java:Constructor ?constructor} .
+}  group by ?class 

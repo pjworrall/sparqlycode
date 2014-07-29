@@ -1,0 +1,11 @@
+# Finds classes with less than 5 characters in their name.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class rdfs:label ?className .
+FILTER  (REGEX (?className,  "^.{0,4}$"))
+}

@@ -1,0 +1,12 @@
+# Finds methods with parameters prefixed with 'in' or 'out'.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+SELECT ?class ?method ?paramName
+WHERE {
+?class a java:Class .
+?class java:method ?method .
+?method java:parameter ?param .
+?param java:name ?paramName .
+FILTER (REGEX (?paramName, "^in[A-Z].*") || REGEX (?paramName, "^out[A-Z].*") || REGEX (?paramName, "^in$','^out$"))
+}

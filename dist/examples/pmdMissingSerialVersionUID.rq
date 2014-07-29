@@ -1,0 +1,17 @@
+# Checks if a class that is implementing java.io.Serializable has the field SerialVersionUID declared.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?class
+WHERE {
+?class a java:Class .
+?class java:implements <http://www.interition.net/sparqlycode/id/java/io/Serializable> .
+?class java:field ?field .
+	FILTER NOT EXISTS {
+		?field java:isPrivate true.
+		?field java:isStatic true .
+		?field java:isFinal true .
+		?field rdfs:label "serialVersionUID"
+	}
+} 
