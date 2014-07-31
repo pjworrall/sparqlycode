@@ -1,6 +1,13 @@
 
   Sparqlycode 0.0.2 Son House Release Notes
 
+Contents [hide <#>]
+
+  * 1 Introduction <#Introduction>
+  * 2 0.0.2 User Stories <#a_0.0.2_User_Stories>
+      o 2.1 0.0.2a Resolved Issues <#a_0.0.2a_Resolved_Issues>
+  * 3 Issues <#Issues>
+
 
   Introduction
 
@@ -47,16 +54,19 @@ Provide example SPARQL queries. Queries used for testing and PMD tests
 are provided.
 
 
+      0.0.2a Resolved Issues
+
+Constructors and overloaded methods are now processed correctly in the
+0.0.2a point release
+
 
   Issues
 
-We do know of some issues that will be resolved in the next release.
-Most importantly:
-
-Constructors and overloaded methods are not processed correctly
+Handling of generics needs a robust solution. Some concepts are simply
+ignored at the moment.
 
 
 ------------------------------------------------------------------------
 
-Revision 1265
+Revision 1315
 

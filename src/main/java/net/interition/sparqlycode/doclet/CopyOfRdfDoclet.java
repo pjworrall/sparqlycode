@@ -112,7 +112,7 @@ public class CopyOfRdfDoclet extends AbstractDoclet {
 
 			// create basic metadata
 			classOrIntUri.addProperty(RDFS.label, curr.name());
-			classOrIntUri.addProperty(JAVALANG.Name, curr.name());
+			classOrIntUri.addProperty(JAVALANG.name, curr.name());
 			classOrIntUri.addProperty(packageNameProperty, curr.containingPackage()
 					.name());
 

@@ -98,27 +98,27 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// create basic metadata
 			typeUri.addProperty(RDFS.label, curr.name());
-			typeUri.addProperty(JAVALANG.Name, curr.name());
-			typeUri.addProperty(JAVALANG.Package, curr.containingPackage()
+			typeUri.addProperty(JAVALANG.name, curr.name());
+			typeUri.addProperty(JAVALANG.javaPackage, curr.containingPackage()
 					.name());
 
 			// add a line number reference
-			typeUri.addProperty(JAVALANG.LineNumber,
+			typeUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(curr.position().line()));
 
 			// add some simple attributes
 			if (curr.isAbstract()) {
-				typeUri.addProperty(JAVALANG.IsAbsract,
+				typeUri.addProperty(JAVALANG.isAbsract,
 						model.createTypedLiteral(true));
 			}
 
 			if (curr.isSerializable()) {
-				typeUri.addProperty(JAVALANG.IsSerializable,
+				typeUri.addProperty(JAVALANG.isSerializable,
 						model.createTypedLiteral(true));
 			}
 
 			if (curr.isFinal()) {
-				typeUri.addProperty(JAVALANG.IsFinal,
+				typeUri.addProperty(JAVALANG.isFinal,
 						model.createTypedLiteral(true));
 			}
 
@@ -127,7 +127,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource containingClazz = model.createResource(baseUri
 						+ curr.containingClass().qualifiedName()
 								.replace(".", "/"));
-				typeUri.addProperty(JAVALANG.InnerClassOf, containingClazz);
+				typeUri.addProperty(JAVALANG.innerClassOf, containingClazz);
 			}
 
 			// handle imports
@@ -146,7 +146,7 @@ public class RdfDoclet extends AbstractDoclet {
 			if (curr.superclass() != null) {
 				Resource superClazz = model.createResource(baseUri
 						+ curr.superclass().qualifiedName().replace(".", "/"));
-				typeUri.addProperty(JAVALANG.Extends, superClazz);
+				typeUri.addProperty(JAVALANG.javaExtends, superClazz);
 			}
 
 			// handle implemented interfaces
@@ -154,7 +154,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource interfaceResource = model.createResource(baseUri
 						+ implementedInterface.qualifiedTypeName().replace(".",
 								"/"));
-				typeUri.addProperty(JAVALANG.Implements, interfaceResource);
+				typeUri.addProperty(JAVALANG.javaImplements, interfaceResource);
 			}
 
 			// what can we do with annotations ?
@@ -162,7 +162,7 @@ public class RdfDoclet extends AbstractDoclet {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
 						+ a.qualifiedTypeName().replace(".", "/"));
-				typeUri.addProperty(JAVALANG.HasAnnotation, annotationTypeUri);
+				typeUri.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// handle fields
@@ -172,32 +172,32 @@ public class RdfDoclet extends AbstractDoclet {
 
 				fieldResource.addProperty(RDF.type, JAVALANG.AField);
 
-				typeUri.addProperty(JAVALANG.Field, fieldResource);
+				typeUri.addProperty(JAVALANG.field, fieldResource);
 
 				// add a line number reference
-				fieldResource.addProperty(JAVALANG.LineNumber,
+				fieldResource.addProperty(JAVALANG.lineNumber,
 						model.createTypedLiteral(field.position().line()));
 
 				// assign a label
 				fieldResource.addProperty(RDFS.label, field.name());
 
 				if (field.isStatic()) {
-					fieldResource.addProperty(JAVALANG.IsStatic,
+					fieldResource.addProperty(JAVALANG.isStatic,
 							model.createTypedLiteral(true));
 				}
 
 				if (field.isFinal()) {
-					fieldResource.addProperty(JAVALANG.IsFinal,
+					fieldResource.addProperty(JAVALANG.isFinal,
 							model.createTypedLiteral(true));
 				}
 
 				if (field.isTransient()) {
-					fieldResource.addProperty(JAVALANG.IsTransient,
+					fieldResource.addProperty(JAVALANG.isTransient,
 							model.createTypedLiteral(true));
 				}
 
 				if (field.isVolatile()) {
-					fieldResource.addProperty(JAVALANG.IsVolatile,
+					fieldResource.addProperty(JAVALANG.isVolatile,
 							model.createTypedLiteral(true));
 				}
 
@@ -206,12 +206,12 @@ public class RdfDoclet extends AbstractDoclet {
 					AnnotationTypeDoc a = desc.annotationType();
 					Resource annotationTypeUri = model.createResource(baseUri
 							+ a.qualifiedTypeName().replace(".", "/"));
-					fieldResource.addProperty(JAVALANG.HasAnnotation,
+					fieldResource.addProperty(JAVALANG.hasAnnotation,
 							annotationTypeUri);
 				}
 
 				Access access = Access.createAccessModifier(field);
-				fieldResource.addProperty(JAVALANG.Access, access.getLabel());
+				fieldResource.addProperty(JAVALANG.access, access.getLabel());
 
 			}
 
@@ -237,7 +237,7 @@ public class RdfDoclet extends AbstractDoclet {
 			Resource packageUri = model.createResource(baseUri
 					+ p.name().replace(".", "/"));
 
-			classOrIntUri.addProperty(JAVALANG.Import, packageUri);
+			classOrIntUri.addProperty(JAVALANG.javaImport, packageUri);
 		}
 
 	}
@@ -257,10 +257,10 @@ public class RdfDoclet extends AbstractDoclet {
 
 			Resource methodUri = model.createResource(baseUri
 					+ con.qualifiedName().replace(".", "/") + "#" + line);
-			classOrIntUri.addProperty(JAVALANG.Constructor, methodUri);
+			classOrIntUri.addProperty(JAVALANG.constructor, methodUri);
 
 			// add a line number reference
-			methodUri.addProperty(JAVALANG.LineNumber,
+			methodUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(line));
 
 			// throws any types ?
@@ -268,7 +268,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource thrownTypeUri = model.createResource(baseUri
 						+ t.qualifiedTypeName().replace(".", "/"));
 
-				methodUri.addProperty(JAVALANG.Throws, thrownTypeUri);
+				methodUri.addProperty(JAVALANG.javaThrows, thrownTypeUri);
 
 			}
 
@@ -277,7 +277,7 @@ public class RdfDoclet extends AbstractDoclet {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
 						+ a.qualifiedTypeName().replace(".", "/"));
-				methodUri.addProperty(JAVALANG.HasAnnotation, annotationTypeUri);
+				methodUri.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// create a label for the method
@@ -310,38 +310,38 @@ public class RdfDoclet extends AbstractDoclet {
 					+ m.qualifiedName().replace(".", "/") + "#" + line);
 
 			// add a line number reference
-			methodUri.addProperty(JAVALANG.LineNumber,
+			methodUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(line));
 
 			methodUri.addProperty(RDF.type, JAVALANG.AMethod);
 
-			classOrIntUri.addProperty(JAVALANG.Method, methodUri);
+			classOrIntUri.addProperty(JAVALANG.method, methodUri);
 
 			// add access modifier
 			Access access = Access.createAccessModifier(m);
-			methodUri.addProperty(JAVALANG.Access, access.getLabel());
+			methodUri.addProperty(JAVALANG.access, access.getLabel());
 
 			// is final
 			if (m.isFinal()) {
-				methodUri.addProperty(JAVALANG.IsFinal,
+				methodUri.addProperty(JAVALANG.isFinal,
 						model.createTypedLiteral(true));
 			}
 
 			// is it static?
 			if (m.isStatic()) {
-				methodUri.addProperty(JAVALANG.IsStatic,
+				methodUri.addProperty(JAVALANG.isStatic,
 						model.createTypedLiteral(true));
 			}
 
 			// is abstract ?
 			if (m.isAbstract()) {
-				methodUri.addProperty(JAVALANG.IsAbsract,
+				methodUri.addProperty(JAVALANG.isAbsract,
 						model.createTypedLiteral(true));
 			}
 
 			// is abstract ?
 			if (m.isSynchronized()) {
-				methodUri.addProperty(JAVALANG.IsSynchronized,
+				methodUri.addProperty(JAVALANG.isSynchronized,
 						model.createTypedLiteral(true));
 			}
 
@@ -350,7 +350,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource thrownTypeUri = model.createResource(baseUri
 						+ t.qualifiedTypeName().replace(".", "/"));
 
-				methodUri.addProperty(JAVALANG.Throws, thrownTypeUri);
+				methodUri.addProperty(JAVALANG.javaThrows, thrownTypeUri);
 
 			}
 
@@ -360,7 +360,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource annotationTypeUri = model.createResource(baseUri
 						+ a.qualifiedTypeName().replace(".", "/"));
 				methodUri
-						.addProperty(JAVALANG.HasAnnotation, annotationTypeUri);
+						.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// create a label for the method
@@ -373,7 +373,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// in handling parameterise types
 			Resource returnTypeUri = model.createResource(baseUri
 					+ m.returnType().qualifiedTypeName().replace(".", "/"));
-			methodUri.addProperty(JAVALANG.Returns, returnTypeUri);
+			methodUri.addProperty(JAVALANG.returns, returnTypeUri);
 
 		}
 
@@ -407,17 +407,17 @@ public class RdfDoclet extends AbstractDoclet {
 
 			switch (g.length) {
 			case 1:
-				methodUri.addProperty(JAVALANG.Parameter, model
-						.createResource().addProperty(JAVALANG.Name, p.name())
-						.addProperty(JAVALANG.ParameterType, g[0]));
+				methodUri.addProperty(JAVALANG.parameter, model
+						.createResource().addProperty(JAVALANG.name, p.name())
+						.addProperty(JAVALANG.parameterType, g[0]));
 				break;
 			case 2:
 				methodUri.addProperty(
-						JAVALANG.Parameter,
+						JAVALANG.parameter,
 						model.createResource()
-								.addProperty(JAVALANG.Name, p.name())
-								.addProperty(JAVALANG.ParameterType, g[0])
-								.addProperty(JAVALANG.ParameterBound, g[1]));
+								.addProperty(JAVALANG.name, p.name())
+								.addProperty(JAVALANG.parameterType, g[0])
+								.addProperty(JAVALANG.parameterBound, g[1]));
 				break;
 			default:
 				System.out
@@ -444,7 +444,7 @@ public class RdfDoclet extends AbstractDoclet {
 		} else {
 
 			// Unpack using literal to create a java:parameterBound
-			// Parameter type didn't have any methods to do this better
+			// parameter type didn't have any methods to do this better
 			int open = p.typeName().indexOf('<');
 			int close = p.typeName().indexOf('>');
 
