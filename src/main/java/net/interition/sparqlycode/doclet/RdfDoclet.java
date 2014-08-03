@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.jena.atlas.logging.Log;
+
 import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
@@ -45,6 +47,10 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	public static boolean start(RootDoc root) {
+
+		// obviously this needs to be resolved against build information
+		System.out
+				.println("Sparqlycode v 0.0.2a . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -99,7 +105,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// create basic metadata
 			typeUri.addProperty(RDFS.label, curr.name());
 			typeUri.addProperty(JAVALANG.name, curr.name());
-			typeUri.addProperty(JAVALANG.javaPackage, curr.containingPackage()
+			typeUri.addProperty(JAVALANG._package, curr.containingPackage()
 					.name());
 
 			// add a line number reference
@@ -137,7 +143,8 @@ public class RdfDoclet extends AbstractDoclet {
 			// dependencies
 			// with curr.importedClasses()
 
-			// constructors should be reusing the same stuff as methods. just the resource type is different!
+			// constructors should be reusing the same stuff as methods. just
+			// the resource type is different!
 			createConstructorRdf(typeUri, curr);
 
 			createMethodsRdf(typeUri, curr);
@@ -146,7 +153,7 @@ public class RdfDoclet extends AbstractDoclet {
 			if (curr.superclass() != null) {
 				Resource superClazz = model.createResource(baseUri
 						+ curr.superclass().qualifiedName().replace(".", "/"));
-				typeUri.addProperty(JAVALANG.javaExtends, superClazz);
+				typeUri.addProperty(JAVALANG._extends, superClazz);
 			}
 
 			// handle implemented interfaces
@@ -154,7 +161,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource interfaceResource = model.createResource(baseUri
 						+ implementedInterface.qualifiedTypeName().replace(".",
 								"/"));
-				typeUri.addProperty(JAVALANG.javaImplements, interfaceResource);
+				typeUri.addProperty(JAVALANG._implements, interfaceResource);
 			}
 
 			// what can we do with annotations ?
@@ -268,7 +275,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource thrownTypeUri = model.createResource(baseUri
 						+ t.qualifiedTypeName().replace(".", "/"));
 
-				methodUri.addProperty(JAVALANG.javaThrows, thrownTypeUri);
+				methodUri.addProperty(JAVALANG._throws, thrownTypeUri);
 
 			}
 
@@ -277,7 +284,8 @@ public class RdfDoclet extends AbstractDoclet {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
 						+ a.qualifiedTypeName().replace(".", "/"));
-				methodUri.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
+				methodUri
+						.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// create a label for the method
@@ -291,23 +299,21 @@ public class RdfDoclet extends AbstractDoclet {
 
 	private void createMethodsRdf(Resource classOrIntUri, ClassDoc curr) {
 		// handle the constructors
-		for (MethodDoc m : curr.methods()) {
+		for (MethodDoc method : curr.methods()) {
 
 			// get the line number as it will be used a couple of times
-			int line = m.position().line();
-
-			// need something here to add a differentiating suffix to make uri
-			// uniqie in case method is overloaded
-			// options considered
-			// 1) add a random number onto the end that will be unique - could
-			// be long, reduces readability
-			// 2) figure out how to add a sequence number - implies an oder when
-			// there is not on, hard to do
-			// 3) add the line number to it - will be unique in a Class and
-			// useful for a human - used this option!
+			int line = method.position().line();
 
 			Resource methodUri = model.createResource(baseUri
-					+ m.qualifiedName().replace(".", "/") + "#" + line);
+					+ method.qualifiedName().replace(".", "/") + "#" + line);
+
+			// support for generic method types
+			TypeVariable[] tv = method.typeParameters();
+
+			for (TypeVariable t : tv) {
+				methodUri.addProperty(JAVALANG.typeVariable,
+						model.createTypedLiteral(t.typeName()));
+			}
 
 			// add a line number reference
 			methodUri.addProperty(JAVALANG.lineNumber,
@@ -318,44 +324,44 @@ public class RdfDoclet extends AbstractDoclet {
 			classOrIntUri.addProperty(JAVALANG.method, methodUri);
 
 			// add access modifier
-			Access access = Access.createAccessModifier(m);
+			Access access = Access.createAccessModifier(method);
 			methodUri.addProperty(JAVALANG.access, access.getLabel());
 
 			// is final
-			if (m.isFinal()) {
+			if (method.isFinal()) {
 				methodUri.addProperty(JAVALANG.isFinal,
 						model.createTypedLiteral(true));
 			}
 
 			// is it static?
-			if (m.isStatic()) {
+			if (method.isStatic()) {
 				methodUri.addProperty(JAVALANG.isStatic,
 						model.createTypedLiteral(true));
 			}
 
 			// is abstract ?
-			if (m.isAbstract()) {
+			if (method.isAbstract()) {
 				methodUri.addProperty(JAVALANG.isAbsract,
 						model.createTypedLiteral(true));
 			}
 
 			// is abstract ?
-			if (m.isSynchronized()) {
+			if (method.isSynchronized()) {
 				methodUri.addProperty(JAVALANG.isSynchronized,
 						model.createTypedLiteral(true));
 			}
 
 			// throws any types ?
-			for (Type t : m.thrownExceptionTypes()) {
+			for (Type t : method.thrownExceptionTypes()) {
 				Resource thrownTypeUri = model.createResource(baseUri
 						+ t.qualifiedTypeName().replace(".", "/"));
 
-				methodUri.addProperty(JAVALANG.javaThrows, thrownTypeUri);
+				methodUri.addProperty(JAVALANG._throws, thrownTypeUri);
 
 			}
 
 			// what can we do with annotations ?
-			for (AnnotationDesc desc : m.annotations()) {
+			for (AnnotationDesc desc : method.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
 						+ a.qualifiedTypeName().replace(".", "/"));
@@ -364,21 +370,123 @@ public class RdfDoclet extends AbstractDoclet {
 			}
 
 			// create a label for the method
-			methodUri.addProperty(RDFS.label, m.name());
-			parametersToRdf(m, methodUri);
+			methodUri.addProperty(RDFS.label, method.name());
 
-			// parameterised return types need to be handled simularly to method
-			// parameters.
-			// need to apply here to - opportunity to generalise both services
-			// in handling parameterise types
-			Resource returnTypeUri = model.createResource(baseUri
-					+ m.returnType().qualifiedTypeName().replace(".", "/"));
-			methodUri.addProperty(JAVALANG.returns, returnTypeUri);
+			// process the method parameters
+			parametersToRdf(method, methodUri);
+
+			// process the method return type
+			returnTypesToRdf(method, methodUri);
 
 		}
 
 	}
 
+	private void returnTypesToRdf(MethodDoc method, Resource methodUri) {
+
+		// generate the resource to the main java Class type
+		Resource returnTypeUri = model.createResource(baseUri
+				+ method.returnType().qualifiedTypeName().replace(".", "/"));
+
+		// if it is a parameterised type ...
+		ParameterizedType type = method.returnType().asParameterizedType();
+
+		if (type instanceof ParameterizedType) {
+			// debug
+			System.out.println(methodUri.toString());
+			
+			// the generic type info needs to be appended here with addProperty
+			// YOU JUST NEED TO TEST ID THE RETURN TYPES HAVE THE NEW CONCEPT ATTACHED ON WILDCARD PARAMTER TYPES
+			methodUri.addProperty(
+					JAVALANG.returns,
+					model.createResource()
+							.addProperty(JAVALANG.type, returnTypeUri)
+							.addProperty(JAVALANG.typeParameter, parameterizedTypesToRdf(type)));
+
+		} else {
+			// simple non generic type
+			methodUri.addProperty(JAVALANG.returns, model.createResource()
+					.addProperty(JAVALANG.type, returnTypeUri));
+		}
+
+	}
+
+	/*
+	 * 
+	 * Processes a methods arguments that have parameterised type
+	 * 
+	 * Parameterised types represent an invocation of a generic class or
+	 * interface. For example, given the generic interface List<E>, possible
+	 * invocations include: (1) List<String> (2) List<T extends Number> (3)
+	 * List<?>
+	 */
+	private Resource parameterizedTypesToRdf(ParameterizedType type) {
+
+		// so we have to handle ordinary parameter types (1), extends (2) and
+		// wildcard (3)
+
+		// create an anonymous node to return
+		Resource parameterizedType = model.createResource();
+
+		for (Type t : type.typeArguments()) {
+			
+			// add the type
+			parameterizedType.addProperty(
+					JAVALANG.type,
+					model.createResource(baseUri
+							+ t.qualifiedTypeName().replace(".", "/")));
+			
+			System.out.println("=== START ===");
+			System.out.println("Properties of Type Argument: ");
+			System.out.println("qualifiedTypeName: " + t.qualifiedTypeName());
+			System.out.println("simpleTypeName: " + t.simpleTypeName());
+			System.out.println("typeName: " + t.typeName());
+
+			if (t.asTypeVariable() != null) {
+				System.out.println("asTypeVariable: "
+						+ t.asTypeVariable().toString());
+				for (Type bound : t.asTypeVariable().bounds()) {
+					System.out.println("---> bounds: " + bound.typeName());
+				}
+
+			}
+			if (t.asWildcardType() != null) {
+				System.out.println("asWildcardType: "
+						+ t.asWildcardType().toString());
+
+				for (Type bound : t.asWildcardType().extendsBounds()) {
+					System.out.println("---> extendsBounds: "
+							+ bound.typeName());
+					
+					parameterizedType.addProperty(
+							JAVALANG._extends,
+							model.createResource(baseUri
+									+ bound.qualifiedTypeName().replace(".", "/")));
+				}
+
+				for (Type _super : t.asWildcardType().superBounds()) {
+					System.out
+							.println("---> superBounds: " + _super.typeName());
+					
+					parameterizedType.addProperty(
+							JAVALANG._super,
+							model.createResource(baseUri
+									+ _super.qualifiedTypeName().replace(".", "/")));
+				}
+				
+
+
+			}
+			System.out.println("=== END === ");
+
+
+		}
+
+		return parameterizedType;
+
+	}
+
+	// this is being replaced
 	private void parametersToRdf(ExecutableMemberDoc method, Resource methodUri) {
 		// there is a conceptual issue here because a method does not know if a
 		// Parameters type is an Interface or a Class
@@ -407,17 +515,19 @@ public class RdfDoclet extends AbstractDoclet {
 
 			switch (g.length) {
 			case 1:
-				methodUri.addProperty(JAVALANG.parameter, model
-						.createResource().addProperty(JAVALANG.name, p.name())
-						.addProperty(JAVALANG.parameterType, g[0]));
+				methodUri.addProperty(
+						JAVALANG.argument,
+						model.createResource()
+								.addProperty(JAVALANG.name, p.name())
+								.addProperty(JAVALANG.type, g[0]));
 				break;
 			case 2:
 				methodUri.addProperty(
-						JAVALANG.parameter,
+						JAVALANG.argument,
 						model.createResource()
 								.addProperty(JAVALANG.name, p.name())
-								.addProperty(JAVALANG.parameterType, g[0])
-								.addProperty(JAVALANG.parameterBound, g[1]));
+								.addProperty(JAVALANG.type, g[0])
+								.addProperty(JAVALANG.typeParameter, g[1]));
 				break;
 			default:
 				System.out
@@ -429,6 +539,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
+	// old method we are trying to replace
 	private Resource[] getParameterizedType(Parameter p) {
 
 		Resource[] r = null;
@@ -443,8 +554,8 @@ public class RdfDoclet extends AbstractDoclet {
 			r[0] = pType;
 		} else {
 
-			// Unpack using literal to create a java:parameterBound
-			// parameter type didn't have any methods to do this better
+			// Unpack using literal to create a java:typeParameter
+			// argument type didn't have any methods to do this better
 			int open = p.typeName().indexOf('<');
 			int close = p.typeName().indexOf('>');
 
@@ -542,6 +653,43 @@ public class RdfDoclet extends AbstractDoclet {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	private String getType(Type type) {
+
+		// don't have to handle these at the moment
+		// type.asAnnotationTypeDoc();
+		// type.asClassDoc();
+
+		/*
+		 * 
+		 * ParameterizedType: Represents an invocation of a generic class or
+		 * interface. For example, given the generic interface List<E>, possible
+		 * invocations include: List<String> List<T extends Number> List<?>
+		 */
+		// type.asParameterizedType();
+
+		/*
+		 * 
+		 * Represents a type variable. For example, the generic interface
+		 * List<E> has a single type variable E. A type variable may have
+		 * explicit bounds, as in C<R extends Remote>.
+		 */
+		// type.asTypeVariable();
+
+		/*
+		 * 
+		 * Represents a wildcard type argument. Examples include: <?> <? extends
+		 * E> <? super T>
+		 * 
+		 * A wildcard type can have explicit extends bounds or explicit super
+		 * bounds or neither, but not both.
+		 */
+		// type.asWildcardType();
+
+		// type.isPrimitive() ;
+
+		return "unimplemented";
 	}
 
 }
