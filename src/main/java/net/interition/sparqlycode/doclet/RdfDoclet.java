@@ -50,7 +50,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2a . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2c . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -291,7 +291,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// create a label for the method
 			methodUri.addProperty(RDFS.label, con.name());
 
-			parametersToRdf(con, methodUri);
+			// parametersToRdf(con, methodUri);
 
 		}
 
@@ -373,7 +373,7 @@ public class RdfDoclet extends AbstractDoclet {
 			methodUri.addProperty(RDFS.label, method.name());
 
 			// process the method parameters
-			parametersToRdf(method, methodUri);
+			argumentsToRdf(method, methodUri);
 
 			// process the method return type
 			returnTypesToRdf(method, methodUri);
@@ -382,9 +382,39 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
+	// this is being replaced
+	private void argumentsToRdf(MethodDoc method, Resource methodUri) {
+		// The javadoc API is a bit confusing, calling arguments parameters. watch out.
+
+		for (Parameter argument : method.parameters()) {
+
+			Resource argumentTypeUri = model.createResource(baseUri
+					+ argument.type().qualifiedTypeName().replace(".", "/"));
+
+			// warning that type will be null if it is not a Parameterised Type
+			ParameterizedType type = argument.type().asParameterizedType();
+			if (type instanceof ParameterizedType) {
+				methodUri.addProperty(
+						JAVALANG.argument,
+						model.createResource()
+								.addProperty(JAVALANG.type, argumentTypeUri)
+								.addProperty(JAVALANG.typeParameter,
+										parameterizedTypesToRdf(type)));
+			} else {
+				//an ordinary type I hope
+				
+				// outstanding issue btw of how we know something is representing an array!
+				methodUri.addProperty(
+						JAVALANG.argument,
+						model.createResource()
+								.addProperty(JAVALANG.type, argumentTypeUri)
+								.addProperty(RDFS.label, argument.name()));
+			}
+		}
+	}
+
 	private void returnTypesToRdf(MethodDoc method, Resource methodUri) {
 
-		// generate the resource to the main java Class type
 		Resource returnTypeUri = model.createResource(baseUri
 				+ method.returnType().qualifiedTypeName().replace(".", "/"));
 
@@ -392,16 +422,14 @@ public class RdfDoclet extends AbstractDoclet {
 		ParameterizedType type = method.returnType().asParameterizedType();
 
 		if (type instanceof ParameterizedType) {
-			// debug
-			System.out.println(methodUri.toString());
-			
+
 			// the generic type info needs to be appended here with addProperty
-			// YOU JUST NEED TO TEST ID THE RETURN TYPES HAVE THE NEW CONCEPT ATTACHED ON WILDCARD PARAMTER TYPES
 			methodUri.addProperty(
 					JAVALANG.returns,
 					model.createResource()
 							.addProperty(JAVALANG.type, returnTypeUri)
-							.addProperty(JAVALANG.typeParameter, parameterizedTypesToRdf(type)));
+							.addProperty(JAVALANG.typeParameter,
+									parameterizedTypesToRdf(type)));
 
 		} else {
 			// simple non generic type
@@ -420,122 +448,62 @@ public class RdfDoclet extends AbstractDoclet {
 	 * invocations include: (1) List<String> (2) List<T extends Number> (3)
 	 * List<?>
 	 */
-	private Resource parameterizedTypesToRdf(ParameterizedType type) {
-
-		// so we have to handle ordinary parameter types (1), extends (2) and
-		// wildcard (3)
+	private Resource parameterizedTypesToRdf(ParameterizedType parameterizedType) {
 
 		// create an anonymous node to return
-		Resource parameterizedType = model.createResource();
+		Resource typeArguments = model.createResource();
 
-		for (Type t : type.typeArguments()) {
-			
-			// add the type
-			parameterizedType.addProperty(
-					JAVALANG.type,
-					model.createResource(baseUri
-							+ t.qualifiedTypeName().replace(".", "/")));
-			
-			System.out.println("=== START ===");
-			System.out.println("Properties of Type Argument: ");
-			System.out.println("qualifiedTypeName: " + t.qualifiedTypeName());
-			System.out.println("simpleTypeName: " + t.simpleTypeName());
-			System.out.println("typeName: " + t.typeName());
+		for (Type t : parameterizedType.typeArguments()) {
 
 			if (t.asTypeVariable() != null) {
-				System.out.println("asTypeVariable: "
-						+ t.asTypeVariable().toString());
-				for (Type bound : t.asTypeVariable().bounds()) {
-					System.out.println("---> bounds: " + bound.typeName());
-				}
+				Resource typeArgument = model.createResource();
+				typeArgument.addProperty(RDFS.label, t.typeName());
+				typeArguments.addProperty(JAVALANG.argument, typeArgument);
 
-			}
-			if (t.asWildcardType() != null) {
-				System.out.println("asWildcardType: "
-						+ t.asWildcardType().toString());
+				// don't understand what bounds means at the moment so just
+				// binding the name of the type variable eg T
+				typeArgument.addProperty(RDFS.label, t.simpleTypeName());
 
-				for (Type bound : t.asWildcardType().extendsBounds()) {
-					System.out.println("---> extendsBounds: "
-							+ bound.typeName());
-					
-					parameterizedType.addProperty(
+			} else if (t.asWildcardType() != null) {
+
+				Resource typeArgument = model.createResource();
+				typeArgument.addProperty(RDFS.label, t.typeName());
+				typeArguments.addProperty(JAVALANG.argument, typeArgument);
+
+				for (Type _bound : t.asWildcardType().extendsBounds()) {
+					// bound could be processed recursively
+					typeArgument.addProperty(
 							JAVALANG._extends,
 							model.createResource(baseUri
-									+ bound.qualifiedTypeName().replace(".", "/")));
+									+ _bound.qualifiedTypeName().replace(".",
+											"/")));
 				}
 
 				for (Type _super : t.asWildcardType().superBounds()) {
-					System.out
-							.println("---> superBounds: " + _super.typeName());
-					
-					parameterizedType.addProperty(
+					// _super can be processed recursively
+					typeArgument.addProperty(
 							JAVALANG._super,
 							model.createResource(baseUri
-									+ _super.qualifiedTypeName().replace(".", "/")));
+									+ _super.qualifiedTypeName().replace(".",
+											"/")));
 				}
-				
 
-
-			}
-			System.out.println("=== END === ");
-
-
-		}
-
-		return parameterizedType;
-
-	}
-
-	// this is being replaced
-	private void parametersToRdf(ExecutableMemberDoc method, Resource methodUri) {
-		// there is a conceptual issue here because a method does not know if a
-		// Parameters type is an Interface or a Class
-		// we have taken the decision that methods consider everything to be an
-		// Interface.
-		// this has the consequence that all Classes will end up also being of
-		// type Interface in RFD!!
-
-		for (Parameter p : method.parameters()) {
-
-			// Could not figure out how to use the API to determine types on
-			// ParameterizedTypes so just parsed string with
-			// a utility method.
-			// This did not work very well and needs special attention - see
-			// COD-41.
-			// in particular had to have a special case to avoid processing
-			// things like E,K,T...etc. in Generics
-			if (p.typeName().length() == 1)
-				break;
-
-			// ..also avoid extends and super of generics
-			if (p.typeName().matches("(^.* extends .*$)|(^.* super .*$)"))
-				break;
-
-			Resource[] g = getParameterizedType(p);
-
-			switch (g.length) {
-			case 1:
-				methodUri.addProperty(
+			} else if (t.asParameterizedType() != null) {
+				// this is a recursive bit because types can also be
+				// parameterised
+				// ignore for now
+				// t.asParameterizedType()
+			} else {
+				// property does not need intermediary bnode in this case
+				typeArguments.addProperty(
 						JAVALANG.argument,
-						model.createResource()
-								.addProperty(JAVALANG.name, p.name())
-								.addProperty(JAVALANG.type, g[0]));
-				break;
-			case 2:
-				methodUri.addProperty(
-						JAVALANG.argument,
-						model.createResource()
-								.addProperty(JAVALANG.name, p.name())
-								.addProperty(JAVALANG.type, g[0])
-								.addProperty(JAVALANG.typeParameter, g[1]));
-				break;
-			default:
-				System.out
-						.println("unexecpected problem handling parameterized method arguments - skipped");
-				break;
+						model.createResource(baseUri
+								+ t.qualifiedTypeName().replace(".", "/")));
 			}
 
 		}
+
+		return typeArguments;
 
 	}
 
@@ -653,43 +621,6 @@ public class RdfDoclet extends AbstractDoclet {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	private String getType(Type type) {
-
-		// don't have to handle these at the moment
-		// type.asAnnotationTypeDoc();
-		// type.asClassDoc();
-
-		/*
-		 * 
-		 * ParameterizedType: Represents an invocation of a generic class or
-		 * interface. For example, given the generic interface List<E>, possible
-		 * invocations include: List<String> List<T extends Number> List<?>
-		 */
-		// type.asParameterizedType();
-
-		/*
-		 * 
-		 * Represents a type variable. For example, the generic interface
-		 * List<E> has a single type variable E. A type variable may have
-		 * explicit bounds, as in C<R extends Remote>.
-		 */
-		// type.asTypeVariable();
-
-		/*
-		 * 
-		 * Represents a wildcard type argument. Examples include: <?> <? extends
-		 * E> <? super T>
-		 * 
-		 * A wildcard type can have explicit extends bounds or explicit super
-		 * bounds or neither, but not both.
-		 */
-		// type.asWildcardType();
-
-		// type.isPrimitive() ;
-
-		return "unimplemented";
 	}
 
 }
