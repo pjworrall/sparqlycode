@@ -50,7 +50,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2c . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2x . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -85,7 +85,7 @@ public class RdfDoclet extends AbstractDoclet {
 			ClassDoc curr = arr[i];
 
 			Resource typeUri = model.createResource(baseUri
-					+ curr.qualifiedName().replace(".", "/"));
+					+ curr.qualifiedName());
 
 			// check if class or interface. potential bug here is it is not
 			// either!!
@@ -131,8 +131,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// if inner class then create relationship
 			if (curr.containingClass() != null) {
 				Resource containingClazz = model.createResource(baseUri
-						+ curr.containingClass().qualifiedName()
-								.replace(".", "/"));
+						+ curr.containingClass().qualifiedName());
 				typeUri.addProperty(JAVALANG.innerClassOf, containingClazz);
 			}
 
@@ -152,15 +151,14 @@ public class RdfDoclet extends AbstractDoclet {
 			// handle super classes
 			if (curr.superclass() != null) {
 				Resource superClazz = model.createResource(baseUri
-						+ curr.superclass().qualifiedName().replace(".", "/"));
+						+ curr.superclass().qualifiedName());
 				typeUri.addProperty(JAVALANG._extends, superClazz);
 			}
 
 			// handle implemented interfaces
 			for (Type implementedInterface : curr.interfaceTypes()) {
 				Resource interfaceResource = model.createResource(baseUri
-						+ implementedInterface.qualifiedTypeName().replace(".",
-								"/"));
+						+ implementedInterface.qualifiedTypeName());
 				typeUri.addProperty(JAVALANG._implements, interfaceResource);
 			}
 
@@ -168,14 +166,14 @@ public class RdfDoclet extends AbstractDoclet {
 			for (AnnotationDesc desc : curr.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
+						+ a.qualifiedTypeName());
 				typeUri.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// handle fields
 			for (FieldDoc field : curr.fields()) {
 				Resource fieldResource = model.createResource(baseUri
-						+ field.qualifiedName().replace(".", "/"));
+						+ field.qualifiedName());
 
 				fieldResource.addProperty(RDF.type, JAVALANG.AField);
 
@@ -212,7 +210,7 @@ public class RdfDoclet extends AbstractDoclet {
 				for (AnnotationDesc desc : field.annotations()) {
 					AnnotationTypeDoc a = desc.annotationType();
 					Resource annotationTypeUri = model.createResource(baseUri
-							+ a.qualifiedTypeName().replace(".", "/"));
+							+ a.qualifiedTypeName());
 					fieldResource.addProperty(JAVALANG.hasAnnotation,
 							annotationTypeUri);
 				}
@@ -242,7 +240,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		for (PackageDoc p : packages) {
 			Resource packageUri = model.createResource(baseUri
-					+ p.name().replace(".", "/"));
+					+ p.name());
 
 			classOrIntUri.addProperty(JAVALANG.javaImport, packageUri);
 		}
@@ -262,20 +260,20 @@ public class RdfDoclet extends AbstractDoclet {
 
 			int line = con.position().line();
 
-			Resource methodUri = model.createResource(baseUri
-					+ con.qualifiedName().replace(".", "/") + "#" + line);
-			classOrIntUri.addProperty(JAVALANG.constructor, methodUri);
+			Resource resource = model.createResource(baseUri
+					+ con.qualifiedName() + "#" + line);
+			classOrIntUri.addProperty(JAVALANG.constructor, resource);
 
 			// add a line number reference
-			methodUri.addProperty(JAVALANG.lineNumber,
+			resource.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(line));
 
 			// throws any types ?
 			for (Type t : con.thrownExceptionTypes()) {
 				Resource thrownTypeUri = model.createResource(baseUri
-						+ t.qualifiedTypeName().replace(".", "/"));
+						+ t.qualifiedTypeName());
 
-				methodUri.addProperty(JAVALANG._throws, thrownTypeUri);
+				resource.addProperty(JAVALANG._throws, thrownTypeUri);
 
 			}
 
@@ -283,15 +281,14 @@ public class RdfDoclet extends AbstractDoclet {
 			for (AnnotationDesc desc : con.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
-				methodUri
-						.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
+						+ a.qualifiedTypeName());
+				resource.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
 			// create a label for the method
-			methodUri.addProperty(RDFS.label, con.name());
+			resource.addProperty(RDFS.label, con.name());
 
-			// parametersToRdf(con, methodUri);
+			argumentsToRdf(con, resource);
 
 		}
 
@@ -305,7 +302,7 @@ public class RdfDoclet extends AbstractDoclet {
 			int line = method.position().line();
 
 			Resource methodUri = model.createResource(baseUri
-					+ method.qualifiedName().replace(".", "/") + "#" + line);
+					+ method.qualifiedName() + "#" + line);
 
 			// support for generic method types
 			TypeVariable[] tv = method.typeParameters();
@@ -354,7 +351,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// throws any types ?
 			for (Type t : method.thrownExceptionTypes()) {
 				Resource thrownTypeUri = model.createResource(baseUri
-						+ t.qualifiedTypeName().replace(".", "/"));
+						+ t.qualifiedTypeName());
 
 				methodUri.addProperty(JAVALANG._throws, thrownTypeUri);
 
@@ -364,7 +361,7 @@ public class RdfDoclet extends AbstractDoclet {
 			for (AnnotationDesc desc : method.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
 				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
+						+ a.qualifiedTypeName());
 				methodUri
 						.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
@@ -382,19 +379,18 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
-	// this is being replaced
-	private void argumentsToRdf(MethodDoc method, Resource methodUri) {
+	private void argumentsToRdf(ExecutableMemberDoc member, Resource resource) {
 		// The javadoc API is a bit confusing, calling arguments parameters. watch out.
 
-		for (Parameter argument : method.parameters()) {
+		for (Parameter argument : member.parameters()) {
 
 			Resource argumentTypeUri = model.createResource(baseUri
-					+ argument.type().qualifiedTypeName().replace(".", "/"));
+					+ argument.type().qualifiedTypeName());
 
 			// warning that type will be null if it is not a Parameterised Type
 			ParameterizedType type = argument.type().asParameterizedType();
 			if (type instanceof ParameterizedType) {
-				methodUri.addProperty(
+				resource.addProperty(
 						JAVALANG.argument,
 						model.createResource()
 								.addProperty(JAVALANG.type, argumentTypeUri)
@@ -404,7 +400,7 @@ public class RdfDoclet extends AbstractDoclet {
 				//an ordinary type I hope
 				
 				// outstanding issue btw of how we know something is representing an array!
-				methodUri.addProperty(
+				resource.addProperty(
 						JAVALANG.argument,
 						model.createResource()
 								.addProperty(JAVALANG.type, argumentTypeUri)
@@ -416,7 +412,7 @@ public class RdfDoclet extends AbstractDoclet {
 	private void returnTypesToRdf(MethodDoc method, Resource methodUri) {
 
 		Resource returnTypeUri = model.createResource(baseUri
-				+ method.returnType().qualifiedTypeName().replace(".", "/"));
+				+ method.returnType().qualifiedTypeName());
 
 		// if it is a parameterised type ...
 		ParameterizedType type = method.returnType().asParameterizedType();
@@ -475,8 +471,7 @@ public class RdfDoclet extends AbstractDoclet {
 					typeArgument.addProperty(
 							JAVALANG._extends,
 							model.createResource(baseUri
-									+ _bound.qualifiedTypeName().replace(".",
-											"/")));
+									+ _bound.qualifiedTypeName()));
 				}
 
 				for (Type _super : t.asWildcardType().superBounds()) {
@@ -484,8 +479,7 @@ public class RdfDoclet extends AbstractDoclet {
 					typeArgument.addProperty(
 							JAVALANG._super,
 							model.createResource(baseUri
-									+ _super.qualifiedTypeName().replace(".",
-											"/")));
+									+ _super.qualifiedTypeName()));
 				}
 
 			} else if (t.asParameterizedType() != null) {
@@ -498,7 +492,7 @@ public class RdfDoclet extends AbstractDoclet {
 				typeArguments.addProperty(
 						JAVALANG.argument,
 						model.createResource(baseUri
-								+ t.qualifiedTypeName().replace(".", "/")));
+								+ t.qualifiedTypeName()));
 			}
 
 		}
@@ -507,41 +501,6 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
-	// old method we are trying to replace
-	private Resource[] getParameterizedType(Parameter p) {
-
-		Resource[] r = null;
-
-		// System.out.println("parameterizedType> " + p.type());
-		// System.out.println("parameterizedTypeName> " + p.typeName());
-
-		if (!p.type().toString().contains("<")) {
-			Resource pType = model.createResource(baseUri
-					+ p.type().qualifiedTypeName().replace(".", "/"));
-			r = new Resource[1];
-			r[0] = pType;
-		} else {
-
-			// Unpack using literal to create a java:typeParameter
-			// argument type didn't have any methods to do this better
-			int open = p.typeName().indexOf('<');
-			int close = p.typeName().indexOf('>');
-
-			r = new Resource[2];
-
-			String ptype = p.typeName().substring(0, open)
-					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
-			r[0] = model.createResource(baseUri + ptype);
-
-			String pbound = p.typeName().substring(open + 1, close)
-					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
-			r[1] = model.createResource(baseUri + pbound);
-
-		}
-
-		return r;
-
-	}
 
 	private void writeRdf(Model model) {
 		try {
