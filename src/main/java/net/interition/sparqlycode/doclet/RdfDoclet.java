@@ -50,7 +50,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2c . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2e . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -177,7 +177,7 @@ public class RdfDoclet extends AbstractDoclet {
 				Resource fieldResource = model.createResource(baseUri
 						+ field.qualifiedName().replace(".", "/"));
 
-				fieldResource.addProperty(RDF.type, JAVALANG.AField);
+				fieldResource.addProperty(RDF.type, JAVALANG._Field);
 
 				typeUri.addProperty(JAVALANG.field, fieldResource);
 
@@ -319,7 +319,7 @@ public class RdfDoclet extends AbstractDoclet {
 			methodUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(line));
 
-			methodUri.addProperty(RDF.type, JAVALANG.AMethod);
+			methodUri.addProperty(RDF.type, JAVALANG._Method);
 
 			classOrIntUri.addProperty(JAVALANG.method, methodUri);
 
