@@ -1,279 +1,307 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html><head>
-	<title>Sparqlycode Examples - Codeleaks</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta name="DC.Title" content="Sparqlycode Examples - Codeleaks">
 
-	<meta name="description" content="wiki for Codeleaks product set - Eg SPARQLYCODE">
+  Sparqlycode Examples
+
+Contents [hide <#>]
+
+  * 1 Overview <#Overview>
+      o 1.1 Standard PREFIX's for vocabularies
+        <#Standard_PREFIX.27s_for_vocabularies>
+      o 1.2 Base Uri for instances of Java Sparqlycode
+        <#Base_Uri_for_instances_of_Java_Sparqlycode>
+      o 1.3 Project build and configuration as RDF
+        <#Project_build_and_configuration_as_RDF>
+      o 1.4 Prefix Summary <#Prefix_Summary>
+      o 1.5 Named Graphs <#Named_Graphs>
+  * 2 Test Data <#Test_Data>
+  * 3 SPARQL Queries <#SPARQL_Queries>
+      o 3.1 Exploring the available concepts and vocabulary
+        <#Exploring_the_available_concepts_and_vocabulary>
+      o 3.2 Exploring facts about Java Classes
+        <#Exploring_facts_about_Java_Classes>
+          + 3.2.1 List the Classes <#List_the_Classes>
+          + 3.2.2 Properties of Classes <#Properties_of_Classes>
+      o 3.3 Linking source code across packages
+        <#Linking_source_code_across_packages>
+          + 3.3.1 Default Graph <#Default_Graph>
+      o 3.4 Examples for Release 0.0.1 Stories
+        <#Examples_for_Release_0.0.1_Stories>
+          + 3.4.1 Convert Java source code to RDF
+            <#Convert_Java_source_code_to_RDF>
+          + 3.4.2 Dereference to underlying source code
+            <#Dereference_to_underlying_source_code>
+          + 3.4.3 Line numbers to the main concepts like Classes,
+            Interfaces, Enums and their methods
+            <#Line_numbers_to_the_main_concepts_like_Classes.2C_Interfaces.2C_Enums_and_their_methods>
+          + 3.4.4 Transitive navigation of methods
+            <#Transitive_navigation_of_methods>
+          + 3.4.5 SPARQL Endpoint with example queries
+            <#SPARQL_Endpoint_with_example_queries>
+      o 3.5 Additional Story preempted from 0.0.2
+        <#Additional_Story_preempted_from_0.0.2>
 
 
-	<link rel="start" title="Codeleaks" href="http://www.interition.net:1966/interwiki/codeleaks/Codeleaks">
-	<link rel="home" title="Codeleaks" href="http://www.interition.net:1966/interwiki/codeleaks/Codeleaks">
-
-	<link href="examples_files/jamwiki.css" type="text/css" rel="stylesheet">
-</head>
-<body style="background:none">
-
-<h1 id="contents-header">Sparqlycode Examples</h1>
+  Overview
 
 
+    Standard PREFIX's for vocabularies
+
+Sparqlycode vocabulary for Java:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+Sparqlycode vocabulary for Maven:
+
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+
+Sparqlycode vocabulary for concepts with no other place to be:
+
+PREFIX isc: <http://www.interition.net/sparqlycode/vocabulary/>
+
+W3C RDF:
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+W3C RDFS
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 
-	
-		
-			<div id="content-article">
-			
-			
-			
-			<table id="toc">
-<tbody><tr>
-<th>Contents <span class="toctoggle hidden" id="toggle-link-wrapper">[<a id="toggle-link" href="#">hide</a>]</span></th>
-</tr>
-<tr>
-<td id="toc-content">
-<ul>
-<li><a href="#Overview"><span class="tocnumber">1</span> <span class="toctext">Overview</span></a><ul>
-<li><a href="#Standard_PREFIX.27s_for_vocabularies"><span class="tocnumber">1.1</span> <span class="toctext">Standard PREFIX's for vocabularies</span></a></li>
-<li><a href="#Base_Uri_for_instances_of_Java_Sparqlycode"><span class="tocnumber">1.2</span> <span class="toctext">Base Uri for instances of Java Sparqlycode</span></a></li>
-<li><a href="#Project_build_and_configuration_as_RDF"><span class="tocnumber">1.3</span> <span class="toctext">Project build and configuration as RDF</span></a></li>
-<li><a href="#Prefix_Summary"><span class="tocnumber">1.4</span> <span class="toctext">Prefix Summary</span></a></li>
-<li><a href="#Named_Graphs"><span class="tocnumber">1.5</span> <span class="toctext">Named Graphs</span></a></li>
-</ul></li>
-<li><a href="#Test_Data"><span class="tocnumber">2</span> <span class="toctext">Test Data</span></a></li>
-<li><a href="#SPARQL_Queries"><span class="tocnumber">3</span> <span class="toctext">SPARQL Queries</span></a><ul>
-<li><a href="#Exploring_the_available_concepts_and_vocabulary"><span class="tocnumber">3.1</span> <span class="toctext">Exploring the available concepts and vocabulary</span></a></li>
-<li><a href="#Exploring_facts_about_Java_Classes"><span class="tocnumber">3.2</span> <span class="toctext">Exploring facts about Java Classes</span></a><ul>
-<li><a href="#List_the_Classes"><span class="tocnumber">3.2.1</span> <span class="toctext">List the Classes</span></a></li>
-<li><a href="#Properties_of_Classes"><span class="tocnumber">3.2.2</span> <span class="toctext">Properties of Classes</span></a></li>
-</ul></li>
-<li><a href="#Linking_source_code_across_packages"><span class="tocnumber">3.3</span> <span class="toctext">Linking source code across packages</span></a><ul>
-<li><a href="#Default_Graph"><span class="tocnumber">3.3.1</span> <span class="toctext">Default Graph</span></a></li>
-</ul></li>
-<li><a href="#Examples_for_Release_0.0.1_Stories"><span class="tocnumber">3.4</span> <span class="toctext">Examples for Release 0.0.1 Stories</span></a><ul>
-<li><a href="#Convert_Java_source_code_to_RDF"><span class="tocnumber">3.4.1</span> <span class="toctext">Convert Java source code to RDF</span></a></li>
-<li><a href="#Dereference_to_underlying_source_code"><span class="tocnumber">3.4.2</span> <span class="toctext">Dereference to underlying source code</span></a></li>
-<li><a href="#Line_numbers_to_the_main_concepts_like_Classes.2C_Interfaces.2C_Enums_and_their_methods"><span class="tocnumber">3.4.3</span> <span class="toctext">Line numbers to the main concepts like Classes, Interfaces, Enums and their methods</span></a></li>
-<li><a href="#Transitive_navigation_of_methods"><span class="tocnumber">3.4.4</span> <span class="toctext">Transitive navigation of methods</span></a></li>
-<li><a href="#SPARQL_Endpoint_with_example_queries"><span class="tocnumber">3.4.5</span> <span class="toctext">SPARQL Endpoint with example queries</span></a></li>
-</ul></li>
-<li><a href="#Additional_Story_preempted_from_0.0.2"><span class="tocnumber">3.5</span> <span class="toctext">Additional Story preempted from 0.0.2</span></a></li>
-</ul></li>
-</ul>
-</td>
-</tr>
-</tbody></table>
-<script type="text/javascript">
-JAMWiki.UI.removeClass(document.getElementById("toggle-link-wrapper"), "hidden");
-JAMWiki.UI.initializeTocToggle("hide", "show");
-</script>
-<h1><span id="Overview">Overview</span></h1>
-<h2><span id="Standard_PREFIX.27s_for_vocabularies">Standard PREFIX's for vocabularies</span></h2>
-<p>Sparqlycode vocabulary for Java:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-</pre>
-<p>Sparqlycode vocabulary for Maven:</p>
-<pre style="color: green">PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-</pre>
-<p>Sparqlycode vocabulary for concepts with no other place to be:</p>
-<pre style="color: green">PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
-</pre>
-<p>W3C RDF:</p>
-<pre style="color: green">PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-</pre>
-<p>W3C RDFS</p>
-<pre style="color: green">PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-</pre>
-<h2><span id="Base_Uri_for_instances_of_Java_Sparqlycode">Base Uri for instances of Java Sparqlycode</span></h2>
-<p>The examples here are based on sparqlycode rdf for ActiveMQ AMQP Version 5.9.1 from the Git rep <a class="externallink" rel="nofollow" href="https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp;h=06f081e58b26d664d54b27ea493c741512f313b5;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d">https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp;h=06f081e58b26d664d54b27ea493c741512f313b5;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d</a>
- . The Base Uri refers to the part of a unique identifier that will be 
-common to all instances of sparqlycode concepts that share the same 
-domain.  This is also known as a shared namespace.</p>
-<p>For example, if the common part of the Uri is the Git URL to the root
- of the source code tree you might declare a prefix for a namespace 
-like:</p>
-<pre style="color: green">PREFIX amqp: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp/src/main/java;h=3d31458ef3d744597f4c02c3ff9d93801a4e9eae;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
-</pre>
-<p>An instance of java:Class might then look like:</p>
-<pre style="color: green">amqp:org/apache/activemq/transport/amqp/ActiveMQJMSVendor
-</pre>
-<p><u>However, minting Uri for concepts in Java is not a trivial task.  
-This is going to be part of the commercial solution. It is a hard 
-problem that we can add significant value by solving.</u></p>
-<p>In this version of Sparqlycode the Base Uri cannot be specified. All 
-instances of Sparqlycode concepts will share the same uri namespace of <a class="externallink" rel="nofollow" href="http://www.interition.net/sparqlycode/id">http://www.interition.net/sparqlycode/id</a> .  The prefix you will want to use in this case is:</p>
-<pre style="color: green">PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-</pre>
-<p><br></p>
-<h2><span id="Project_build_and_configuration_as_RDF">Project build and configuration as RDF</span></h2>
-<p>The URI for the Maven POM extends the Git URL to produce a PREFIX of:</p>
-<p><br></p>
-<pre style="color: green">PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
-</pre>
-<h2><span id="Prefix_Summary">Prefix Summary</span></h2>
-<p>For your convenience the prefix's for your SPARQL queries should be:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+    Base Uri for instances of Java Sparqlycode
 
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
+The examples here are based on sparqlycode rdf for ActiveMQ AMQP Version
+5.9.1 from the Git rep
+https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp;h=06f081e58b26d664d54b27ea493c741512f313b5;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d
+. The Base Uri refers to the part of a unique identifier that will be
+common to all instances of sparqlycode concepts that share the same
+domain. This is also known as a shared namespace.
 
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+For example, if the common part of the Uri is the Git URL to the root of
+the source code tree you might declare a prefix for a namespace like:
 
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
+PREFIX amqp: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-amqp/src/main/java;h=3d31458ef3d744597f4c02c3ff9d93801a4e9eae;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
 
-PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
+An instance of java:Class might then look like:
 
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+amqp:org/apache/activemq/transport/amqp/ActiveMQJMSVendor
 
-</pre>
-<h2><span id="Named_Graphs">Named Graphs</span></h2>
-<p>As a practice we are placing the Sparqlycode RDF for a given software
- project in a Named Graph. We are using the root of the source code 
-control tree as the name. In this case for ActiveMQ that is the URL <a class="externallink" rel="nofollow" href="https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/">https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/</a>  . (Note the trailing "/" is added).</p>
-<p>When using this as a Graph in SPARQL it would look something like...</p>
-<pre style="color: green">SELECT *
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+_However, minting Uri for concepts in Java is not a trivial task. This
+is going to be part of the commercial solution. It is a hard problem
+that we can add significant value by solving._
+
+In this version of Sparqlycode the Base Uri cannot be specified. All
+instances of Sparqlycode concepts will share the same uri namespace of
+http://www.interition.net/sparqlycode/id . The prefix you will want to
+use in this case is:
+
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+
+
+    Project build and configuration as RDF
+
+The URI for the Maven POM extends the Git URL to produce a PREFIX of:
+
+
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
+
+
+    Prefix Summary
+
+For your convenience the prefix's for your SPARQL queries should be:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+PREFIX isc: <http://www.interition.net/sparqlycode/vocabulary/>
+
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
+
+
+    Named Graphs
+
+As a practice we are placing the Sparqlycode RDF for a given software
+project in a Named Graph. We are using the root of the source code
+control tree as the name. In this case for ActiveMQ that is the URL
+https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/
+. (Note the trailing "/" is added).
+
+When using this as a Graph in SPARQL it would look something like...
+
+SELECT *
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  {
  
    ?s ?p ?o .
 
 } LIMIT 100
 
-</pre>
-<h1><span id="Test_Data">Test Data</span></h1>
-<p>For your convenience the sparqlycode RDF for Apache ActiveMQ 5.9.1 
-can be found in $SPARQLYCODE_HOME/rdf/org.apache.activemq/5.9.1 .  If 
-you want to jump straight to querying sparqlycode load these Turtle 
-files into your triplestore, or other runtime environment for query 
-execution, with a named graph as previously introduced.</p>
-<p>If you want to generate sparqlycode RDF for your own Maven based Java project, then refer to xxxxx</p>
-<p><br></p>
-<h1><span id="SPARQL_Queries">SPARQL Queries</span></h1>
-<h2><span id="Exploring_the_available_concepts_and_vocabulary">Exploring the available concepts and vocabulary</span></h2>
-<p>The example expects the sparqlycode RDF to be in a Graph with an id 
-of the Base Uri for the source code repository containing the Java code.
- You can check the existence of such a graph with the following:</p>
-<pre style="color: green">
+
+  Test Data
+
+For your convenience the sparqlycode RDF for Apache ActiveMQ 5.9.1 can
+be found in $SPARQLYCODE_HOME/rdf/org.apache.activemq/5.9.1 . If you
+want to jump straight to querying sparqlycode load these Turtle files
+into your triplestore, or other runtime environment for query execution,
+with a named graph as previously introduced.
+
+If you want to generate sparqlycode RDF for your own Maven based Java
+project, then refer to xxxxx
+
+
+  SPARQL Queries
+
+
+    Exploring the available concepts and vocabulary
+
+The example expects the sparqlycode RDF to be in a Graph with an id of
+the Base Uri for the source code repository containing the Java code.
+You can check the existence of such a graph with the following:
+
+
 SELECT distinct ?g { GRAPH ?g {?s ?p ?o} } LIMIT 10
 
-</pre>
-<p><br>
-To get the Type's of things that can be queried from this graph:</p>
-<pre style="color: green">SELECT distinct ?type
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+
+To get the Type's of things that can be queried from this graph:
+
+SELECT distinct ?type
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  { 
    ?s a ?type .
 
 } LIMIT 100
-</pre>
-<p><br>
-To get available properties:</p>
-<p><br></p>
-<pre style="color: green">SELECT distinct ?property
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+
+
+To get available properties:
+
+
+SELECT distinct ?property
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  { 
    ?s ?property ?o .
 
 } LIMIT 100
-</pre>
-<p><br></p>
-<p><br></p>
-<h2><span id="Exploring_facts_about_Java_Classes">Exploring facts about Java Classes</span></h2>
-<h3><span id="List_the_Classes">List the Classes</span></h3>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+
+
+    Exploring facts about Java Classes
+
+
+      List the Classes
+
+PREFIX java: <http://www.interition.net/java/ref/>
 
 SELECT ?class
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  { 
    ?class a java:Class .
 
 } 
 
-</pre>
-<p><br></p>
-<h3><span id="Properties_of_Classes">Properties of Classes</span></h3>
-<p>Lets see what properties are available on methods for a given Class. 
- Because the Uri are long it is getting difficult for us mortals to read
- now. However, this query finds methods for the class 
-AmqpNioSslTransportFactory and then gets the properties and their 
-values. If you change the SELECT projection on the query below to <i>distinct ?property</i>
- it will remove from view the other details. You will find that the 
-properties include method Parameters and Returns : so you know what it 
-needs provided and what it will return.</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+      Properties of Classes
+
+Lets see what properties are available on methods for a given Class.
+Because the Uri are long it is getting difficult for us mortals to read
+now. However, this query finds methods for the class
+AmqpNioSslTransportFactory and then gets the properties and their
+values. If you change the SELECT projection on the query below to
+/distinct ?property/ it will remove from view the other details. You
+will find that the properties include method Arguments and Returns : so
+you know what it needs provided and what it will return.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT ?method ?property ?value
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  { 
-   &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt; java:method ?method .
+   <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory> java:method ?method .
    ?method ?property ?value .
 
 } 
 
-</pre>
-<p>Parameters to methods are modeled as bnodes and the following query will traverse those to show you their name and type:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+Parameters to methods are modeled as bnodes and the following query will
+traverse those to show you their name and type:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
-SELECT ?method ?parameter ?property ?value
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt;
+SELECT ?method ?argument ?property ?value
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/>
  { 
-   &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt; java:method ?method .
-   ?method java:parameter ?parameter .
-   ?parameter ?property ?value .
+   <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory> java:method ?method .
+   ?method java:argument ?argument .
+   ?argument ?property ?value .
 } 
-</pre>
-<p><br></p>
-<h2><span id="Linking_source_code_across_packages">Linking source code across packages</span></h2>
-<p>A method of org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory had a parameter of type <a class="externallink" rel="nofollow" href="http://www.interition.net/sparqlycode/id/org/apache/activemq/wireformat/WireFormat">http://www.interition.net/sparqlycode/id/org/apache/activemq/wireformat/WireFormat</a>:
- as a package name  that would be 
-org.apache.activemq.wireformat.WireFormat. This Class is part of 
+
+
+    Linking source code across packages
+
+A method of
+org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory had a
+parameter of type
+http://www.interition.net/sparqlycode/id/org/apache/activemq/wireformat/WireFormat:
+as a package name that would be
+org.apache.activemq.wireformat.WireFormat. This Class is part of
 org.apache.activemq but is a sub module known as activemq-client. To aid
- provenance our best practice is to define another graph for this 
-modules sparqlycode. The graph would be named with the URL to the source
- code repository root for this module: in this case <a class="externallink" rel="nofollow" href="https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54/">https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54/</a> .</p>
-<p>With such a graph we should get a list of properties and objects from the following question:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+provenance our best practice is to define another graph for this modules
+sparqlycode. The graph would be named with the URL to the source code
+repository root for this module: in this case
+https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54/
+.
+
+With such a graph we should get a list of properties and objects from
+the following question:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT *
-FROM &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54&gt;
+FROM <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54>
  { 
-   &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/wireformat/WireFormat&gt; ?p ?o .
+   <http://www.interition.net/sparqlycode/id/org/apache/activemq/wireformat/WireFormat> ?p ?o .
 } 
-</pre>
-<p>We can also explicitly query across the two graphs now to traverse 
-the method of AmqpNioSslTransportFactory that has the parameter of type 
-WireFormat. The query below takes the parameterType object resulting 
-from the first graph and finds other properties from the second graph:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+We can also explicitly query across the two graphs now to traverse the
+method of AmqpNioSslTransportFactory that has the argument of type
+WireFormat. The query below takes the argumentType object resulting from
+the first graph and finds other properties from the second graph:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT ?type ?p ?o
  { 
 
-   GRAPH &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/&gt; 
+   GRAPH <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d/> 
       {
-         &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt; java:method ?method .
-         ?method java:parameter ?parameter .
-         ?parameter java:parameterType ?type .
+         <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory> java:method ?method .
+         ?method java:argument ?argument .
+         ?argument java:type ?type .
       }
-   GRAPH &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54&gt;
+   GRAPH <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=tree;f=activemq-client;h=4bf3b813dbd2322435f46b6513d86982e0445603;hb=b9d51bf1d4dc9e4fd9f4275356ac03c2fe652c54>
       {
 
        ?type ?p ?o .
@@ -281,114 +309,135 @@ SELECT ?type ?p ?o
       }
   
 } 
-</pre>
-<p><br></p>
-<h3><span id="Default_Graph">Default Graph</span></h3>
-<p>Depending on the triplestore or runtime query environment you are 
-using there may or maybe not be a default graph that is the combination 
-of all graphs.  If this is the case then the following query will return
- the same result as the example in 'Linking source code across 
-packages'.</p>
-<p><br></p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+
+      Default Graph
+
+Depending on the triplestore or runtime query environment you are using
+there may or maybe not be a default graph that is the combination of all
+graphs. If this is the case then the following query will return the
+same result as the example in 'Linking source code across packages'.
+
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT ?type ?p ?o
  { 
-         &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt; java:method ?method .
-         ?method java:parameter ?parameter .
-         ?parameter java:parameterType ?type .
+         <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory> java:method ?method .
+         ?method java:argument ?argument .
+         ?argument java:type ?type .
          ?type ?p ?o .
 } 
-</pre>
-<p>By extension, if we wanted to know what source code repositories each
- of these Java types came from we can do so by reporting the graph that 
-contains them. The graph nam eis the Uri to the source code repository:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+By extension, if we wanted to know what source code repositories each of
+these Java types came from we can do so by reporting the graph that
+contains them. The graph name is the Uri to the source code repository:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT distinct ?source ?method ?type ?target
  { 
          GRAPH ?source {
-            &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt; java:method ?method .
-            ?method java:parameter ?parameter .
-            ?parameter java:parameterType ?type }
+            <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory> java:method ?method .
+            ?method java:argument ?argument .
+            ?argument java:type ?type }
          
         
          GRAPH ?target 
              { ?type ?p ?o }
 
 } 
-</pre>
-<p><br></p>
-<h2><span id="Examples_for_Release_0.0.1_Stories">Examples for Release 0.0.1 Stories</span></h2>
-<h3><span id="Convert_Java_source_code_to_RDF">Convert Java source code to RDF</span></h3>
-<p>See example SPARQL queries previously.</p>
-<h3><span id="Dereference_to_underlying_source_code">Dereference to underlying source code</span></h3>
-<p>The example shows how to obtain the name of the graph that a 
-particular Class belongs.  This is a Uri to the source code repository 
-where that Class will be found.</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+
+    Examples for Release 0.0.1 Stories
+
+
+      Convert Java source code to RDF
+
+See example SPARQL queries previously.
+
+
+      Dereference to underlying source code
+
+The example shows how to obtain the name of the graph that a particular
+Class belongs. This is a Uri to the source code repository where that
+Class will be found.
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT distinct ?source
  { 
    GRAPH ?source {
-   &lt;http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory&gt;
+   <http://www.interition.net/sparqlycode/id/org/apache/activemq/transport/amqp/AmqpNioSslTransportFactory>
        ?p ?o .
     }
 
 } LIMIT 1
 
-</pre>
-<h3><span id="Line_numbers_to_the_main_concepts_like_Classes.2C_Interfaces.2C_Enums_and_their_methods">Line numbers to the main concepts like Classes, Interfaces, Enums and their methods</span></h3>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
+
+      Line numbers to the main concepts like Classes, Interfaces, Enums
+      and their methods
+
+PREFIX java: <http://www.interition.net/java/ref/>
 
 SELECT ?class ?method ?line
  { 
    ?class java:method ?method .
    ?method java:lineNumber ?line .
 } 
-</pre>
-<p><br></p>
-<h3><span id="Transitive_navigation_of_methods">Transitive navigation of methods</span></h3>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+
+      Transitive navigation of methods
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT 
  { 
       # todo
 } 
-</pre>
-<p><br></p>
-<h3><span id="SPARQL_Endpoint_with_example_queries">SPARQL Endpoint with example queries</span></h3>
-<p><a class="externallink" rel="nofollow" href="http://www.sparqlycode.com:1966/bigdata">http://www.sparqlycode.com:1966/bigdata</a></p>
-<p>Request an account to query to info@interition.net</p>
-<p>Example sparqlycode RDF files for some common Apache Java projects can be downloaded from the <a class="externallink" rel="nofollow" href="http://www.interition.net/i/products/sparqlingcode.html">Interiiton release page</a>.  To query with Jena:</p>
-<pre>arq --data file.ttl --query queryfile.rq
-</pre>
-<h2><span id="Additional_Story_preempted_from_0.0.2">Additional Story preempted from 0.0.2</span></h2>
-<p>0.0.2 had a story for including the Maven build information.  Some 
-initial concepts have already been implemented in this release. For 
-example:</p>
-<pre style="color: green">PREFIX java: &lt;http://www.interition.net/java/ref/&gt;
-PREFIX maven: &lt;http://www.interition.net/sparqlycode/maven/vocabulary/&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX sc: &lt;http://www.interition.net/sparqlycode/id&gt;
-PREFIX isc: &lt;http://www.interition.net/sparqlycode/vocabulary/&gt;
-PREFIX pom: &lt;https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/&gt;
+
+
+      SPARQL Endpoint with example queries
+
+http://www.sparqlycode.com:1966/bigdata
+
+Request an account to query to info@interition.net
+
+Example sparqlycode RDF files for some common Apache Java projects can
+be downloaded from the Interiiton release page
+<http://www.interition.net/i/products/sparqlingcode.html>. To query with
+Jena:
+
+arq --data file.ttl --query queryfile.rq
+
+
+    Additional Story preempted from 0.0.2
+
+0.0.2 had a story for including the Maven build information. Some
+initial concepts have already been implemented in this release. For example:
+
+PREFIX java: <http://www.interition.net/java/ref/>
+PREFIX maven: <http://www.interition.net/sparqlycode/maven/vocabulary/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX sc: <http://www.interition.net/sparqlycode/id>
+PREFIX isc: <http://www.interition.net/sparqlycode/vocabulary/>
+PREFIX pom: <https://git-wip-us.apache.org/repos/asf?p=activemq.git;a=blob_plain;f=activemq-amqp/pom.xml;hb=bdb24ee7c78aa037a085bc7ce90bd216a3a13d3d?/>
 
 
 SELECT  *
@@ -397,29 +446,10 @@ SELECT  *
       ?s ?properties ?value .
       ?value ?p ?o .
 } 
-</pre>
-<p><br></p>
-<hr>
-<p>Revision 1015</p>
-<p><br></p>
-			</div>
-			<div class="clear"></div>
-			
-		
-	
-	
 
 
+------------------------------------------------------------------------
+
+Revision 1359
 
 
-
-	
-
-
-	
-
-
-
-
-
-</body></html>
