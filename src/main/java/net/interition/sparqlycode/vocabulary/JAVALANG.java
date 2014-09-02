@@ -49,6 +49,7 @@ public class JAVALANG {
 	public static final Property isTransient = property("isTransient");
 	public static final Property isVolatile = property("isVolatile");
 	public static final Property isSerializable = property("isSerializable");
+	public static final Property isNative = property("isNative");
 	public static final Property lineNumber = property("lineNumber");
 	public static final Property javaImport = property("imports");
 	public static final Property access = property("access");

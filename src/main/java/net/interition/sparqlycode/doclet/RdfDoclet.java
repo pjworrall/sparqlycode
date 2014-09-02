@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.jena.atlas.logging.Log;
-
 import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
@@ -50,7 +48,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2e . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2f . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -174,16 +172,26 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// handle fields
 			for (FieldDoc field : curr.fields()) {
+				
+				// the field type
+				Resource fieldTypeResource = model.createResource(baseUri
+						+ field.type().qualifiedTypeName().replace(".", "/"));
+				
+				// the line it is on .. used subsequently
+				int line = field.position().line();
+				
 				Resource fieldResource = model.createResource(baseUri
-						+ field.qualifiedName().replace(".", "/"));
+						+ field.qualifiedName().replace(".", "/") + "#" + line);
 
 				fieldResource.addProperty(RDF.type, JAVALANG._Field);
+				
+				fieldResource.addProperty(JAVALANG.type,fieldTypeResource);
 
 				typeUri.addProperty(JAVALANG.field, fieldResource);
 
 				// add a line number reference
 				fieldResource.addProperty(JAVALANG.lineNumber,
-						model.createTypedLiteral(field.position().line()));
+						model.createTypedLiteral(line));
 
 				// assign a label
 				fieldResource.addProperty(RDFS.label, field.name());
@@ -350,6 +358,12 @@ public class RdfDoclet extends AbstractDoclet {
 				methodUri.addProperty(JAVALANG.isSynchronized,
 						model.createTypedLiteral(true));
 			}
+			
+			// is Native
+			if (method.isNative()) {
+				methodUri.addProperty(JAVALANG.isNative,
+						model.createTypedLiteral(true));
+			}
 
 			// throws any types ?
 			for (Type t : method.thrownExceptionTypes()) {
@@ -382,7 +396,6 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
-	// this is being replaced
 	private void argumentsToRdf(MethodDoc method, Resource methodUri) {
 		// The javadoc API is a bit confusing, calling arguments parameters. watch out.
 
@@ -504,42 +517,6 @@ public class RdfDoclet extends AbstractDoclet {
 		}
 
 		return typeArguments;
-
-	}
-
-	// old method we are trying to replace
-	private Resource[] getParameterizedType(Parameter p) {
-
-		Resource[] r = null;
-
-		// System.out.println("parameterizedType> " + p.type());
-		// System.out.println("parameterizedTypeName> " + p.typeName());
-
-		if (!p.type().toString().contains("<")) {
-			Resource pType = model.createResource(baseUri
-					+ p.type().qualifiedTypeName().replace(".", "/"));
-			r = new Resource[1];
-			r[0] = pType;
-		} else {
-
-			// Unpack using literal to create a java:typeParameter
-			// argument type didn't have any methods to do this better
-			int open = p.typeName().indexOf('<');
-			int close = p.typeName().indexOf('>');
-
-			r = new Resource[2];
-
-			String ptype = p.typeName().substring(0, open)
-					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
-			r[0] = model.createResource(baseUri + ptype);
-
-			String pbound = p.typeName().substring(open + 1, close)
-					.replaceAll("(\\s+)|(<|>)", "").replace(".", "/");
-			r[1] = model.createResource(baseUri + pbound);
-
-		}
-
-		return r;
 
 	}
 

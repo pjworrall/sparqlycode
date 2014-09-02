@@ -29,14 +29,20 @@ if [ ! "$1" ] ; then
    exit 1;
 fi
 
-#if [ ! "$2" ] ; then
+if [ ! "$2" ] ; then
+   echo You need to provide a Java version
+   echo $USAGE >&2
+   exit 1;
+fi
+
+#if [ ! "$3" ] ; then
 #   echo You need to provide a BaseUri. Eg. the source code repository uri
 #   echo $USAGE >&2
 #   exit 1;
 #fi
 
-#export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1 BASEURI=$2"
-export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1"
+#export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1 JAVADOC_VERSION=$2 BASEURI=$3"
+export params="SPARQLYCODE_HOME=${SPARQLYCODE_HOME} SUBPACKAGE=$1 JAVADOC_VERSION=$2"
 echo "\n"
 
 $JAVA_HOME/bin/java -jar $SAXON_HOME/saxon9he.jar -xsl:${SPARQLYCODE_HOME}/bin/pom4sparqly.xsl -s:pom.xml -o:scpom.xml $params 
