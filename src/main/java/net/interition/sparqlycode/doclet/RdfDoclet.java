@@ -48,7 +48,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2f . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2g . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -102,7 +102,6 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// create basic metadata
 			typeUri.addProperty(RDFS.label, curr.name());
-			typeUri.addProperty(JAVALANG.name, curr.name());
 			typeUri.addProperty(JAVALANG._package, curr.containingPackage()
 					.name());
 

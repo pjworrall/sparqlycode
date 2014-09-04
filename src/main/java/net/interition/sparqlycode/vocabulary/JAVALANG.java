@@ -29,7 +29,6 @@ public class JAVALANG {
 	public static final Resource _Method = resource("Method");
 	public static final Resource _Field = resource("Field");
 	
-	public static final Property name = property("name");
 	public static final Property _package = property("package");
 	public static final Property constructor = property("constructor");
 	public static final Property method = property("method");
