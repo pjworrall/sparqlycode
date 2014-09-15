@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
@@ -108,6 +110,10 @@ public class RdfDoclet extends AbstractDoclet {
 			// add a line number reference
 			typeUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(curr.position().line()));
+			
+			// add access modifier
+			Access classAccess = Access.createAccessModifier(curr);
+			typeUri.addProperty(JAVALANG.access, classAccess.getLabel());
 
 			// add some simple attributes
 			if (curr.isAbstract()) {
@@ -142,7 +148,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// constructors should be reusing the same stuff as methods. just
 			// the resource type is different!
-			createConstructorRdf(typeUri, curr);
+			// createConstructorRdf(typeUri, curr);
 
 			createMethodsRdf(typeUri, curr);
 
@@ -224,8 +230,8 @@ public class RdfDoclet extends AbstractDoclet {
 							annotationTypeUri);
 				}
 
-				Access access = Access.createAccessModifier(field);
-				fieldResource.addProperty(JAVALANG.access, access.getLabel());
+				Access fieldAccess = Access.createAccessModifier(field);
+				fieldResource.addProperty(JAVALANG.access, fieldAccess.getLabel());
 
 			}
 
@@ -262,58 +268,32 @@ public class RdfDoclet extends AbstractDoclet {
 
 	}
 
-	private void createConstructorRdf(Resource classOrIntUri, ClassDoc curr) {
-		// handle the constructors
-		// duplication here as it is the same as methods generally
-		for (ConstructorDoc con : curr.constructors()) {
-
-			int line = con.position().line();
-
-			Resource methodUri = model.createResource(baseUri
-					+ con.qualifiedName().replace(".", "/") + "#" + line);
-			classOrIntUri.addProperty(JAVALANG.constructor, methodUri);
-
-			// add a line number reference
-			methodUri.addProperty(JAVALANG.lineNumber,
-					model.createTypedLiteral(line));
-
-			// throws any types ?
-			for (Type t : con.thrownExceptionTypes()) {
-				Resource thrownTypeUri = model.createResource(baseUri
-						+ t.qualifiedTypeName().replace(".", "/"));
-
-				methodUri.addProperty(JAVALANG._throws, thrownTypeUri);
-
-			}
-
-			// what can we do with annotations ?
-			for (AnnotationDesc desc : con.annotations()) {
-				AnnotationTypeDoc a = desc.annotationType();
-				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
-				methodUri
-						.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
-			}
-
-			// create a label for the method
-			methodUri.addProperty(RDFS.label, con.name());
-
-			// parametersToRdf(con, methodUri);
-
-		}
-
-	}
-
 	private void createMethodsRdf(Resource classOrIntUri, ClassDoc curr) {
-		// handle the constructors
-		for (MethodDoc method : curr.methods()) {
+		
+		// we want to process both methods and constructors
+		
+		ExecutableMemberDoc[] members = new ExecutableMemberDoc[curr.constructors().length + curr.methods().length];
+		System.arraycopy(curr.constructors(), 0, members, 0,  curr.constructors().length);		
+		System.arraycopy(curr.methods(), 0, members, curr.constructors().length, curr.methods().length);
+		
+		
+		for (ExecutableMemberDoc method : members) {
 
 			// get the line number as it will be used a couple of times
 			int line = method.position().line();
 
 			Resource methodUri = model.createResource(baseUri
 					+ method.qualifiedName().replace(".", "/") + "#" + line);
-
+			
+			// moved typing and class relationship to here so we can handle constructors as well
+			if(method.isConstructor()) {
+				methodUri.addProperty(RDF.type, JAVALANG._Constructor);
+				classOrIntUri.addProperty(JAVALANG.constructor, methodUri);
+			} else {
+				methodUri.addProperty(RDF.type, JAVALANG._Method);
+				classOrIntUri.addProperty(JAVALANG.method, methodUri);
+			}
+			
 			// support for generic method types
 			TypeVariable[] tv = method.typeParameters();
 
@@ -325,10 +305,6 @@ public class RdfDoclet extends AbstractDoclet {
 			// add a line number reference
 			methodUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(line));
-
-			methodUri.addProperty(RDF.type, JAVALANG._Method);
-
-			classOrIntUri.addProperty(JAVALANG.method, methodUri);
 
 			// add access modifier
 			Access access = Access.createAccessModifier(method);
@@ -346,13 +322,7 @@ public class RdfDoclet extends AbstractDoclet {
 						model.createTypedLiteral(true));
 			}
 
-			// is abstract ?
-			if (method.isAbstract()) {
-				methodUri.addProperty(JAVALANG.isAbsract,
-						model.createTypedLiteral(true));
-			}
-
-			// is abstract ?
+			// is synchronised ?
 			if (method.isSynchronized()) {
 				methodUri.addProperty(JAVALANG.isSynchronized,
 						model.createTypedLiteral(true));
@@ -388,14 +358,25 @@ public class RdfDoclet extends AbstractDoclet {
 			// process the method parameters
 			argumentsToRdf(method, methodUri);
 
-			// process the method return type
-			returnTypesToRdf(method, methodUri);
-
+			// things specific to a method
+			if(method instanceof MethodDoc ) {
+				
+				// is abstract ?
+				if ( ((MethodDoc) method).isAbstract()) {
+					methodUri.addProperty(JAVALANG.isAbsract,
+							model.createTypedLiteral(true));
+				}
+				
+				// process the method return type
+				returnTypesToRdf((MethodDoc) method, methodUri);
+				
+			}
+			
 		}
 
 	}
 
-	private void argumentsToRdf(MethodDoc method, Resource methodUri) {
+	private void argumentsToRdf(ExecutableMemberDoc method, Resource methodUri) {
 		// The javadoc API is a bit confusing, calling arguments parameters. watch out.
 
 		for (Parameter argument : method.parameters()) {

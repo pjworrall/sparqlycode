@@ -4,7 +4,7 @@
 
 	<groupId>net.interition</groupId>
 	<artifactId>sparqlycode-maven-plugin</artifactId>
-	<version>0.0.2g-SNAPSHOT</version>
+	<version>0.0.2h-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<!-- to use me mvn net.interition:sparqlycode-maven-plugin:0.0.1-SNAPSHOT:sparqlycode -->
