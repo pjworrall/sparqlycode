@@ -89,17 +89,12 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// check if class or interface. potential bug here is it is not
 			// either!!
-			if (curr.isClass()) {
-				typeUri.addProperty(RDF.type, JAVALANG.Class);
-
-			}
-
-			if (curr.isInterface()) {
-				typeUri.addProperty(RDF.type, JAVALANG.Interface);
-			}
-
 			if (curr.isEnum()) {
 				typeUri.addProperty(RDF.type, JAVALANG.Enum);
+			} else if (curr.isInterface()) {
+				typeUri.addProperty(RDF.type, JAVALANG.Interface);
+			} else if (curr.isClass()) {
+				typeUri.addProperty(RDF.type, JAVALANG.Class); 
 			}
 
 			// create basic metadata
