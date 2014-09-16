@@ -40,7 +40,7 @@ OUTPUT_LOCATION=$3
 
 if [ "$OUTPUT_LOCATION" = "" ] ; then
    echo "No output directory provided, defaulting to current working directory"
-   OUTPUT_LOCATION="."
+   OUTPUT_LOCATION="./target/site/apidocs"
 fi
 
 
