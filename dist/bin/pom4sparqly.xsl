@@ -29,6 +29,10 @@
     <xsl:param
         name="JAVADOC_VERSION"
         select="'1.7'"/>
+        
+   <xsl:param
+        name="OUTPUT_LOCATION"
+        select="'.'"/>
     
         <xsl:template match="@*|node()">
             <xsl:copy copy-namespaces="no">
@@ -77,6 +81,8 @@
                              <xsl:element name="additionalparam">-baseuri <xsl:value-of select="$BASEURI"/></xsl:element>
                          </xsl:if>
                          <xsl:element name="subpackages">${subpackage}</xsl:element>
+                         <xsl:element name="reportOutputDirectory">${basedir}</xsl:element>
+                         <xsl:element name="destDir"><xsl:value-of select="$OUTPUT_LOCATION"/></xsl:element>
                      </xsl:element>
                  </xsl:element>
              </xsl:element>        
