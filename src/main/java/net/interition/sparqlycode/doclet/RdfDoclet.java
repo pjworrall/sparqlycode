@@ -50,7 +50,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2g . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2i . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -94,7 +94,7 @@ public class RdfDoclet extends AbstractDoclet {
 			} else if (curr.isInterface()) {
 				typeUri.addProperty(RDF.type, JAVALANG.Interface);
 			} else if (curr.isClass()) {
-				typeUri.addProperty(RDF.type, JAVALANG.Class); 
+				typeUri.addProperty(RDF.type, JAVALANG.Class);
 			}
 
 			// create basic metadata
@@ -105,7 +105,7 @@ public class RdfDoclet extends AbstractDoclet {
 			// add a line number reference
 			typeUri.addProperty(JAVALANG.lineNumber,
 					model.createTypedLiteral(curr.position().line()));
-			
+
 			// add access modifier
 			Access classAccess = Access.createAccessModifier(curr);
 			typeUri.addProperty(JAVALANG.access, classAccess.getLabel());
@@ -170,68 +170,81 @@ public class RdfDoclet extends AbstractDoclet {
 				typeUri.addProperty(JAVALANG.hasAnnotation, annotationTypeUri);
 			}
 
-			// handle fields
-			for (FieldDoc field : curr.fields()) {
-				
-				// the field type
-				Resource fieldTypeResource = model.createResource(baseUri
-						+ field.type().qualifiedTypeName().replace(".", "/"));
-				
-				// the line it is on .. used subsequently
-				int line = field.position().line();
-				
-				Resource fieldResource = model.createResource(baseUri
-						+ field.qualifiedName().replace(".", "/") + "#" + line);
-
-				fieldResource.addProperty(RDF.type, JAVALANG._Field);
-				
-				fieldResource.addProperty(JAVALANG.type,fieldTypeResource);
-
-				typeUri.addProperty(JAVALANG.field, fieldResource);
-
-				// add a line number reference
-				fieldResource.addProperty(JAVALANG.lineNumber,
-						model.createTypedLiteral(line));
-
-				// assign a label
-				fieldResource.addProperty(RDFS.label, field.name());
-
-				if (field.isStatic()) {
-					fieldResource.addProperty(JAVALANG.isStatic,
-							model.createTypedLiteral(true));
-				}
-
-				if (field.isFinal()) {
-					fieldResource.addProperty(JAVALANG.isFinal,
-							model.createTypedLiteral(true));
-				}
-
-				if (field.isTransient()) {
-					fieldResource.addProperty(JAVALANG.isTransient,
-							model.createTypedLiteral(true));
-				}
-
-				if (field.isVolatile()) {
-					fieldResource.addProperty(JAVALANG.isVolatile,
-							model.createTypedLiteral(true));
-				}
-
-				// what can we do with annotations ?
-				for (AnnotationDesc desc : field.annotations()) {
-					AnnotationTypeDoc a = desc.annotationType();
-					Resource annotationTypeUri = model.createResource(baseUri
-							+ a.qualifiedTypeName().replace(".", "/"));
-					fieldResource.addProperty(JAVALANG.hasAnnotation,
-							annotationTypeUri);
-				}
-
-				Access fieldAccess = Access.createAccessModifier(field);
-				fieldResource.addProperty(JAVALANG.access, fieldAccess.getLabel());
-
-			}
+			generateFieldsRDF(typeUri, curr);
 
 			writeRdf(model);
 
+		}
+
+	}
+
+	private void generateFieldsRDF(Resource typeUri, ClassDoc _class) {
+
+		// handle fields
+		for (FieldDoc field : _class.fields()) {
+
+			// the field type
+			Resource fieldTypeResource = model.createResource(baseUri
+					+ field.type().qualifiedTypeName().replace(".", "/"));
+
+			// the line it is on .. used subsequently
+			int line = field.position().line();
+
+			Resource fieldResource = model.createResource(baseUri
+					+ field.qualifiedName().replace(".", "/") + "#" + line);
+
+			fieldResource.addProperty(RDF.type, JAVALANG._Field);
+
+			fieldResource.addProperty(JAVALANG.type, fieldTypeResource);
+
+			typeUri.addProperty(JAVALANG.field, fieldResource);
+
+			// add a line number reference
+			fieldResource.addProperty(JAVALANG.lineNumber,
+					model.createTypedLiteral(line));
+
+			// assign a label
+			fieldResource.addProperty(RDFS.label, field.name());
+
+			if (field.isStatic()) {
+				fieldResource.addProperty(JAVALANG.isStatic,
+						model.createTypedLiteral(true));
+			}
+
+			if (field.isFinal()) {
+				fieldResource.addProperty(JAVALANG.isFinal,
+						model.createTypedLiteral(true));
+			}
+
+			if (field.isTransient()) {
+				fieldResource.addProperty(JAVALANG.isTransient,
+						model.createTypedLiteral(true));
+			}
+
+			if (field.isVolatile()) {
+				fieldResource.addProperty(JAVALANG.isVolatile,
+						model.createTypedLiteral(true));
+			}
+
+			// what can we do with annotations ?
+			for (AnnotationDesc desc : field.annotations()) {
+				AnnotationTypeDoc a = desc.annotationType();
+				Resource annotationTypeUri = model.createResource(baseUri
+						+ a.qualifiedTypeName().replace(".", "/"));
+				fieldResource.addProperty(JAVALANG.hasAnnotation,
+						annotationTypeUri);
+			}
+
+			Access fieldAccess = Access.createAccessModifier(field);
+			fieldResource.addProperty(JAVALANG.access, fieldAccess.getLabel());
+
+			// generic type handling
+			ParameterizedType type = field.type().asParameterizedType();
+
+			if (type instanceof ParameterizedType) {
+				fieldResource.addProperty(JAVALANG.typeParameter,
+						parameterizedTypesToRdf(type));
+			}
 		}
 
 	}
@@ -264,14 +277,16 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	private void createMethodsRdf(Resource classOrIntUri, ClassDoc curr) {
-		
+
 		// we want to process both methods and constructors
-		
-		ExecutableMemberDoc[] members = new ExecutableMemberDoc[curr.constructors().length + curr.methods().length];
-		System.arraycopy(curr.constructors(), 0, members, 0,  curr.constructors().length);		
-		System.arraycopy(curr.methods(), 0, members, curr.constructors().length, curr.methods().length);
-		
-		
+
+		ExecutableMemberDoc[] members = new ExecutableMemberDoc[curr
+				.constructors().length + curr.methods().length];
+		System.arraycopy(curr.constructors(), 0, members, 0,
+				curr.constructors().length);
+		System.arraycopy(curr.methods(), 0, members,
+				curr.constructors().length, curr.methods().length);
+
 		for (ExecutableMemberDoc method : members) {
 
 			// get the line number as it will be used a couple of times
@@ -279,16 +294,17 @@ public class RdfDoclet extends AbstractDoclet {
 
 			Resource methodUri = model.createResource(baseUri
 					+ method.qualifiedName().replace(".", "/") + "#" + line);
-			
-			// moved typing and class relationship to here so we can handle constructors as well
-			if(method.isConstructor()) {
+
+			// moved typing and class relationship to here so we can handle
+			// constructors as well
+			if (method.isConstructor()) {
 				methodUri.addProperty(RDF.type, JAVALANG._Constructor);
 				classOrIntUri.addProperty(JAVALANG.constructor, methodUri);
 			} else {
 				methodUri.addProperty(RDF.type, JAVALANG._Method);
 				classOrIntUri.addProperty(JAVALANG.method, methodUri);
 			}
-			
+
 			// support for generic method types
 			TypeVariable[] tv = method.typeParameters();
 
@@ -322,7 +338,7 @@ public class RdfDoclet extends AbstractDoclet {
 				methodUri.addProperty(JAVALANG.isSynchronized,
 						model.createTypedLiteral(true));
 			}
-			
+
 			// is Native
 			if (method.isNative()) {
 				methodUri.addProperty(JAVALANG.isNative,
@@ -354,25 +370,26 @@ public class RdfDoclet extends AbstractDoclet {
 			argumentsToRdf(method, methodUri);
 
 			// things specific to a method
-			if(method instanceof MethodDoc ) {
-				
+			if (method instanceof MethodDoc) {
+
 				// is abstract ?
-				if ( ((MethodDoc) method).isAbstract()) {
+				if (((MethodDoc) method).isAbstract()) {
 					methodUri.addProperty(JAVALANG.isAbsract,
 							model.createTypedLiteral(true));
 				}
-				
+
 				// process the method return type
 				returnTypesToRdf((MethodDoc) method, methodUri);
-				
+
 			}
-			
+
 		}
 
 	}
 
 	private void argumentsToRdf(ExecutableMemberDoc method, Resource methodUri) {
-		// The javadoc API is a bit confusing, calling arguments parameters. watch out.
+		// The javadoc API is a bit confusing, calling arguments parameters.
+		// watch out.
 
 		for (Parameter argument : method.parameters()) {
 
@@ -389,14 +406,13 @@ public class RdfDoclet extends AbstractDoclet {
 								.addProperty(JAVALANG.typeParameter,
 										parameterizedTypesToRdf(type)));
 			} else {
-				//an ordinary type I hope
-				
-				// outstanding issue btw of how we know something is representing an array!
-				methodUri.addProperty(
-						JAVALANG.argument,
-						model.createResource()
-								.addProperty(JAVALANG.type, argumentTypeUri)
-								.addProperty(RDFS.label, argument.name()));
+				// an ordinary type I hope
+
+				// outstanding issue btw of how we know something is
+				// representing an array!
+				methodUri.addProperty(JAVALANG.argument, model.createResource()
+						.addProperty(JAVALANG.type, argumentTypeUri)
+						.addProperty(RDFS.label, argument.name()));
 			}
 		}
 	}
