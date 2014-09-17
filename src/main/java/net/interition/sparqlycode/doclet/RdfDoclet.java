@@ -50,7 +50,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2i . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.2j . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -426,6 +426,8 @@ public class RdfDoclet extends AbstractDoclet {
 		ParameterizedType type = method.returnType().asParameterizedType();
 
 		if (type instanceof ParameterizedType) {
+			
+			System.out.println(method.name() + " :return type: " + method.returnType().typeName() );
 
 			// the generic type info needs to be appended here with addProperty
 			methodUri.addProperty(
@@ -458,7 +460,7 @@ public class RdfDoclet extends AbstractDoclet {
 		Resource typeArguments = model.createResource();
 
 		for (Type t : parameterizedType.typeArguments()) {
-
+			
 			if (t.asTypeVariable() != null) {
 				Resource typeArgument = model.createResource();
 				typeArgument.addProperty(RDFS.label, t.typeName());
@@ -466,7 +468,8 @@ public class RdfDoclet extends AbstractDoclet {
 
 				// don't understand what bounds means at the moment so just
 				// binding the name of the type variable eg T
-				typeArgument.addProperty(RDFS.label, t.simpleTypeName());
+				// TODO: looked like a duplicate property so I took out 
+				//typeArgument.addProperty(RDFS.label, t.simpleTypeName());
 
 			} else if (t.asWildcardType() != null) {
 
@@ -498,8 +501,15 @@ public class RdfDoclet extends AbstractDoclet {
 				// ignore for now
 				// t.asParameterizedType()
 			} else {
-				// property does not need intermediary bnode in this case
-				typeArguments.addProperty(
+				// property does not need intermediary bnode in this case - OH YES IT DOES!
+				
+				System.out.println( "parameterizedType.typeArguments(): " + t.qualifiedTypeName()  );
+				
+				Resource typeArgument = model.createResource();
+				typeArgument.addProperty(RDFS.label, t.typeName());
+				typeArguments.addProperty(JAVALANG.argument, typeArgument);
+				
+				typeArgument.addProperty(
 						JAVALANG.argument,
 						model.createResource(baseUri
 								+ t.qualifiedTypeName().replace(".", "/")));
