@@ -41,6 +41,7 @@ public class JAVALANG {
 	public static final Property _implements = property("implements");
 	public static final Property returns = property("returns");
 	public static final Property _throws = property("throws");
+	public static final Property dimension = property("dimension");
 	public static final Property innerClassOf = property("innerClassOf");
 	public static final Property field = property("field");
 	public static final Property isAbsract = property("isAbstract");

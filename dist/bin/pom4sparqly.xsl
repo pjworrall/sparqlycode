@@ -69,7 +69,7 @@
                      <xsl:element name="version">2.9.1</xsl:element>
                      <xsl:element name="configuration">
                          <xsl:element name="doclet">net.interition.sparqlycode.doclet.RdfDoclet</xsl:element>
-                         <xsl:element name="docletPath">${sparqlycode.lib}/sparqlycode-maven-plugin.jar:${sparqlycode.lib}/jena-core-2.11.1.jar:${sparqlycode.lib}/jena-arq-2.11.1.jar:${sparqlycode.lib}/jena-iri-1.0.1.jar:${sparqlycode.lib}/slf4j-log4j12-1.6.4.jar:${sparqlycode.lib}/jcl-over-slf4j-1.6.4.jar:${sparqlycode.lib}/slf4j-api-1.6.4.jar:${sparqlycode.lib}/log4j-1.2.16.jar:${sparqlycode.lib}/xml-apis-1.4.01.jar:${sparqlycode.lib}/xercesImpl-2.11.0.jar</xsl:element>
+                         <xsl:element name="docletPath">${sparqlycode.lib}/sparqlycode-maven-plugin.jar:${sparqlycode.lib}/jena-core-2.11.1.jar:${sparqlycode.lib}/jena-arq-2.11.1.jar:${sparqlycode.lib}/jena-iri-1.0.1.jar:${sparqlycode.lib}/slf4j-log4j12-1.6.4.jar:${sparqlycode.lib}/jcl-over-slf4j-1.6.4.jar:${sparqlycode.lib}/slf4j-api-1.6.4.jar:${sparqlycode.lib}/log4j-1.2.16.jar:${sparqlycode.lib}/xml-apis-1.4.01.jar:${sparqlycode.lib}/xercesImpl-2.11.0.jar:${sparqlycode.lib}/commons-lang3-3.2.1.jar</xsl:element>
                          <xsl:element name="javadocVersion"><xsl:value-of select="$JAVADOC_VERSION"/></xsl:element>
                          <xsl:element name="useStandardDocletOptions">false</xsl:element>
                          <xsl:element name="detail">true</xsl:element>

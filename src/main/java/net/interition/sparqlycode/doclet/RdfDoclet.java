@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
@@ -50,7 +51,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.2j . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.3 . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -205,6 +206,16 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// assign a label
 			fieldResource.addProperty(RDFS.label, field.name());
+			
+			//is field an array, add dimensions ?
+			int dimension = arrayDimension(field.type().dimension()) ;
+			
+			//System.out.println(_class.name() + " : " + field.name() + " : " + field.type().dimension() + " : " + dimension );
+			
+			if( dimension > 0) { 
+				fieldResource.addProperty(JAVALANG.dimension,
+						model.createTypedLiteral(dimension));
+			}
 
 			if (field.isStatic()) {
 				fieldResource.addProperty(JAVALANG.isStatic,
@@ -388,32 +399,42 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	private void argumentsToRdf(ExecutableMemberDoc method, Resource methodUri) {
-		// The javadoc API is a bit confusing, calling arguments parameters.
-		// watch out.
+		// The javadoc API is a bit confusing, calling arguments parameters, watch out.
 
 		for (Parameter argument : method.parameters()) {
 
 			Resource argumentTypeUri = model.createResource(baseUri
 					+ argument.type().qualifiedTypeName().replace(".", "/"));
+			
+			Resource node = model.createResource();
 
 			// warning that type will be null if it is not a Parameterised Type
 			ParameterizedType type = argument.type().asParameterizedType();
 			if (type instanceof ParameterizedType) {
-				methodUri.addProperty(
-						JAVALANG.argument,
-						model.createResource()
-								.addProperty(JAVALANG.type, argumentTypeUri)
-								.addProperty(JAVALANG.typeParameter,
-										parameterizedTypesToRdf(type)));
+				
+				node.addProperty(JAVALANG.type, argumentTypeUri)
+						.addProperty(JAVALANG.typeParameter,
+								parameterizedTypesToRdf(type));
+				
+				methodUri.addProperty(JAVALANG.argument,node);
+				
 			} else {
 				// an ordinary type I hope
-
-				// outstanding issue btw of how we know something is
-				// representing an array!
-				methodUri.addProperty(JAVALANG.argument, model.createResource()
-						.addProperty(JAVALANG.type, argumentTypeUri)
-						.addProperty(RDFS.label, argument.name()));
+	
+				node.addProperty(JAVALANG.type, argumentTypeUri)
+						.addProperty(RDFS.label, argument.name());
+				
+				methodUri.addProperty(JAVALANG.argument, node );
 			}
+			
+			// if an array (not sure what this will mean to a parameterised type
+			int dimension = arrayDimension(argument.type().dimension()) ;
+			
+			if( dimension > 0) { 
+				node.addProperty(JAVALANG.dimension,
+						model.createTypedLiteral(dimension));
+			}
+			
 		}
 	}
 
@@ -421,27 +442,33 @@ public class RdfDoclet extends AbstractDoclet {
 
 		Resource returnTypeUri = model.createResource(baseUri
 				+ method.returnType().qualifiedTypeName().replace(".", "/"));
-
+		
 		// if it is a parameterised type ...
 		ParameterizedType type = method.returnType().asParameterizedType();
+		
+		Resource node = model.createResource();
 
 		if (type instanceof ParameterizedType) {
-			
-			System.out.println(method.name() + " :return type: " + method.returnType().typeName() );
-
 			// the generic type info needs to be appended here with addProperty
-			methodUri.addProperty(
-					JAVALANG.returns,
-					model.createResource()
-							.addProperty(JAVALANG.type, returnTypeUri)
-							.addProperty(JAVALANG.typeParameter,
-									parameterizedTypesToRdf(type)));
+			node.addProperty(JAVALANG.type, returnTypeUri)
+					.addProperty(JAVALANG.typeParameter,
+							parameterizedTypesToRdf(type));
+			methodUri.addProperty(JAVALANG.returns,node);
 
 		} else {
 			// simple non generic type
-			methodUri.addProperty(JAVALANG.returns, model.createResource()
-					.addProperty(JAVALANG.type, returnTypeUri));
+			node.addProperty(JAVALANG.type, returnTypeUri);
 		}
+		
+		//if it is an array add dimension property
+		int dimension = arrayDimension(method.returnType().dimension()) ;
+		
+		if( dimension > 0) { 
+			node.addProperty(JAVALANG.dimension,
+					model.createTypedLiteral(dimension));
+		}
+		
+		methodUri.addProperty(JAVALANG.returns,node);
 
 	}
 
@@ -501,9 +528,6 @@ public class RdfDoclet extends AbstractDoclet {
 				// ignore for now
 				// t.asParameterizedType()
 			} else {
-				// property does not need intermediary bnode in this case - OH YES IT DOES!
-				
-				System.out.println( "parameterizedType.typeArguments(): " + t.qualifiedTypeName()  );
 				
 				Resource typeArgument = model.createResource();
 				typeArgument.addProperty(RDFS.label, t.typeName());
@@ -567,6 +591,14 @@ public class RdfDoclet extends AbstractDoclet {
 			return 2;
 		}
 		return 0;
+	}
+	
+	/*
+	 * Convert string dimension like [][] into an int dimension
+	 */
+	private int arrayDimension(String stringArrayDimension) {
+		int dimension = StringUtils.countMatches(stringArrayDimension, "[]");
+		return dimension;
 	}
 
 	public static boolean validOptions(String options[][],
