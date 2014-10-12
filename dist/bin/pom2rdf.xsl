@@ -14,7 +14,7 @@
         select="'http://www.interition.net/sparqlycode/vocabulary/'"/>
     
     <xsl:param name="RdfURI"
-        select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#'"/>
+        select="'http://www.interition.net/sparqlycode/vocabulary/'"/>
     
     <xsl:strip-space elements="*"/>
     <xsl:output method="text"/>
@@ -25,18 +25,27 @@
         @prefix mvn: <xsl:text>&lt;</xsl:text><xsl:value-of select="$MvnURI"/><xsl:text>&gt;</xsl:text> .
         @prefix isc: <xsl:text>&lt;</xsl:text><xsl:value-of select="$IscURI"/><xsl:text>&gt;</xsl:text> .
         @prefix : <xsl:text>&lt;</xsl:text><xsl:value-of select="$BaseURI"/><xsl:text>&gt;</xsl:text> .
-        <!-- create the root projet uri that will be passed to all templates -->
+        <!-- create the root project uri that will be passed to all templates -->
         <xsl:variable name="projectUri">
             <xsl:value-of select="concat(':',name())"/>
         </xsl:variable>       
         <xsl:value-of select="$projectUri"/> rdf:type isc:MavenProject .
         
+        <xsl:value-of select="$projectUri"/> mvn:name "<xsl:value-of select="name"/>" .
+        <xsl:value-of select="$projectUri"/> mvn:description "<xsl:value-of select="description"/>" .
+        <xsl:value-of select="$projectUri"/> mvn:packaging "<xsl:value-of select="packaging"/>" .
+        
+        <xsl:value-of select="$projectUri"/> mvn:groupId "<xsl:value-of select="groupId"/>" .
+        <xsl:value-of select="$projectUri"/> mvn:artifactId "<xsl:value-of select="artifactId"/>" .
+        <xsl:value-of select="$projectUri"/> mvn:version "<xsl:value-of select="versio "/>" .
+
         <xsl:apply-templates select="parent">
             <xsl:with-param name="projectUri" select="$projectUri" />
         </xsl:apply-templates>
         <xsl:apply-templates select="dependencies/dependency">
             <xsl:with-param name="projectUri" select="$projectUri" />
         </xsl:apply-templates>
+        
     </xsl:template>
     
     <xsl:template match="parent">
@@ -63,6 +72,7 @@
         </xsl:variable>
         
         <xsl:value-of select="$projectUri"/> mvn:dependency <xsl:value-of select="$dependencyUri"/>     .  
+        
         <xsl:apply-templates select="*">
             <xsl:with-param name="subjectUri" select="$dependencyUri" />
         </xsl:apply-templates>
