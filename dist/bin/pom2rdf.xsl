@@ -14,7 +14,7 @@
         select="'http://www.interition.net/sparqlycode/vocabulary/'"/>
     
     <xsl:param name="RdfURI"
-        select="'http://www.interition.net/sparqlycode/vocabulary/'"/>
+        select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#'"/>
     
     <xsl:strip-space elements="*"/>
     <xsl:output method="text"/>
