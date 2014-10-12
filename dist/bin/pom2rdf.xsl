@@ -32,12 +32,13 @@
         <xsl:value-of select="$projectUri"/> rdf:type isc:MavenProject .
         
         <xsl:value-of select="$projectUri"/> mvn:name "<xsl:value-of select="name"/>" .
-        <xsl:value-of select="$projectUri"/> mvn:description "<xsl:value-of select="description"/>" .
+        <!--  disabled description as multiple lines break turtle -->
+       <!-- <xsl:value-of select="$projectUri"/> mvn:description "<xsl:value-of select="description"/>" . --> 
         <xsl:value-of select="$projectUri"/> mvn:packaging "<xsl:value-of select="packaging"/>" .
         
         <xsl:value-of select="$projectUri"/> mvn:groupId "<xsl:value-of select="groupId"/>" .
         <xsl:value-of select="$projectUri"/> mvn:artifactId "<xsl:value-of select="artifactId"/>" .
-        <xsl:value-of select="$projectUri"/> mvn:version "<xsl:value-of select="versio "/>" .
+        <xsl:value-of select="$projectUri"/> mvn:version "<xsl:value-of select="version"/>" .
 
         <xsl:apply-templates select="parent">
             <xsl:with-param name="projectUri" select="$projectUri" />
