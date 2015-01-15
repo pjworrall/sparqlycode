@@ -1,0 +1,37 @@
+@prefix : <http://www.interition.net/sparqlycode/vocabulary/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.interition.net/sparqlycode/vocabulary/>
+    a owl:Ontology ;
+    rdfs:comment """This document is published by Paul Worrall, Interition Limited (http://www.interition.net).
+
+This is a draft Ontology for concepts that didn't seem to exist elsewhere. All feedback is welcome."""@en ;
+    rdfs:label "Interition Sparqlycode Orphan Concepts"@en  .
+
+
+:File
+	 a rdf:Type ;
+	 rdfs:label "a Type of File on a computer file system" .
+	 
+:file
+    a rdf:Property ;
+    rdfs:label "a property referring to a computer file system" .
+
+:fileName
+    a rdf:Property ;
+    rdfs:label "a property referring to a string literal representation of a physical file in a computer file system" .
+    
+:fileSuffix
+    a rdf:Property ;
+    rdfs:label "a property referring to a string literal representation of the suffix or extension following a files name in a computer file system" .
+    
+:fullFileName
+    a rdf:Property ;
+    rdfs:label "a property referring to a string literal representation of the prefix and suffix of a files name in a computer file system" .
+    
+:fileLocation
+    a rdf:Property ;
+    rdfs:label "a property referring to a string literal representation of the folder or directory where a file can be found on a computer file system" .

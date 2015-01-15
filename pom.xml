@@ -4,7 +4,7 @@
 
 	<groupId>net.interition</groupId>
 	<artifactId>sparqlycode-maven-plugin</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.4-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
 	<!-- to use me mvn net.interition:sparqlycode-maven-plugin:0.0.1-SNAPSHOT:sparqlycode -->
@@ -128,38 +128,115 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- To run the Jena schema generator for the PROV model -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<executions>
+					<execution>
+						<id>model-generation</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>jena.schemagen</mainClass>
+							<!-- had to put this in to stop a warning coming up -->
+							<killAfter>-1</killAfter>
+							<!-- there is a problem with this command line arg decleration, if 
+								you reformat the XML it gets mucked up, watch out! -->
+							<commandlineArgs>
+								-i ${basedir}/src/main/resources/ISCO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n ISCO
+							</commandlineArgs>
+						</configuration>
+					</execution>
+
+					<!-- This plugin is to run a Riot check before doing anything else <execution> 
+						<id>RDFValidator</id> <phase>generate-sources</phase> <goals> <goal>java</goal> 
+						</goals> <configuration> <includePluginDependencies>true</includePluginDependencies> 
+						<mainClass>net.interition.sparqlycode.testsuite.ValidityChecker</mainClass> 
+						</configuration> </execution> -->
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.jena</groupId>
+						<artifactId>apache-jena-libs</artifactId>
+						<type>pom</type>
+						<version>2.12.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- End of plugins for Jena schema generator for the PROV model -->
 		</plugins>
-		<!--  
-        Above maven-dependepcy-plugin gives a validation error in m2e. 
-        To fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018
-        -->
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-dependency-plugin</artifactId>
-                                        <versionRange>[2.8,)</versionRange>
-                                        <goals>
-                                            <goal>copy-dependencies</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <execute />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+		<!-- Above maven-dependepcy-plugin gives a validation error in m2e. To 
+			fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018 -->
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.8,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute />
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											exec-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.3.2,)
+										</versionRange>
+										<goals>
+											<goal>java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

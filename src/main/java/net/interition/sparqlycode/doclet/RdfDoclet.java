@@ -11,6 +11,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import net.interition.sparlycode.model.ISCO;
 import net.interition.sparqlycode.vocabulary.Access;
 import net.interition.sparqlycode.vocabulary.JAVALANG;
 
@@ -34,6 +35,7 @@ public class RdfDoclet extends AbstractDoclet {
 	private static String fileNameDefault = "sparqlycode.ttl";
 
 	private String baseUri = null;
+	private String fileUri = null;
 	private String fileName = null;
 
 	// create an empty Model
@@ -51,7 +53,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.3 . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.4-SNAPSHOT . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
@@ -59,12 +61,21 @@ public class RdfDoclet extends AbstractDoclet {
 			Map<String, String> options = readOptions(root.options());
 			String fileName = (options.get("file") == null) ? RdfDoclet.fileNameDefault
 					: options.get("file");
+			
 			doclet.setFileName(fileName);
 
 			String baseUri = (options.get("baseuri") == null) ? RdfDoclet.baseUriDefault
 					: options.get("baseuri");
+			
 			doclet.setBaseUri(baseUri);
-
+			
+			//change the URI schema of baseUri to file Uri if we are certain it is a http scheme based Uri
+			if(baseUri.startsWith("http:")) {
+				doclet.setFileUri(baseUri.replaceFirst("http:", "file:"));
+			} else {
+				doclet.setFileUri(baseUri);
+			}
+			
 			return doclet.start(doclet, root);
 
 		} finally {
@@ -87,6 +98,13 @@ public class RdfDoclet extends AbstractDoclet {
 
 			Resource typeUri = model.createResource(baseUri
 					+ curr.qualifiedName().replace(".", "/"));
+			
+			// if there is no containing class create a file reference
+			if (curr.containingClass() == null) {
+				Resource fileResource = model.createResource(fileUri
+						+ curr.qualifiedName().replace(".", "/") + ".java");
+				typeUri.addProperty(ISCO.file, fileResource);
+			}
 
 			// check if class or interface. potential bug here is it is not
 			// either!!
@@ -631,6 +649,14 @@ public class RdfDoclet extends AbstractDoclet {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getFileUri() {
+		return fileUri;
+	}
+
+	public void setFileUri(String fileUri) {
+		this.fileUri = fileUri;
 	}
 
 }
