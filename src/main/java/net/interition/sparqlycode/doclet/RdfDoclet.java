@@ -639,7 +639,7 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	public void setBaseUri(String baseUri) {
-		model.setNsPrefix("", baseUri);
+		model.setNsPrefix("sparqlycode", baseUri);
 		this.baseUri = baseUri;
 	}
 
