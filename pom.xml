@@ -167,7 +167,7 @@
 							<!-- there is a problem with this command line arg decleration, if 
 								you reformat the XML it gets mucked up, watch out! -->
 							<commandlineArgs>
-								-i ${basedir}/src/main/resources/ISCO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n ISCO
+								-i ${basedir}/src/main/resources/JAVAO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n JAVAO
 							</commandlineArgs>
 						</configuration>
 					</execution>

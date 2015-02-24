@@ -1,0 +1,150 @@
+@prefix : <http://www.interition.net/java/ref/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.interition.net/java/ref/>
+    a owl:Ontology ;
+    rdfs:comment """This document is published by Paul Worrall, Interition Limited (http://www.interition.net), Feb 2015.
+
+This is an Ontology representing concepts in the Java programming language. All feedback is welcome."""@en ;
+    rdfs:label "Interition Java Language Ontology"@en  .
+
+:Class
+	 a rdfs:Class ;
+	 rdfs:label "a Java Class" .
+	 
+:Interface
+	a rdfs:Class ;
+	rdfs:label "a Java Interface" .
+
+:Enum
+	a rdfs:Class ;
+	rdfs:label "a Java Enum" .
+	
+:Constructor
+	a rdfs:Class ;
+	rdfs:label "a Java constructor method" .
+	
+:Method
+	a rdfs:Class ;
+	rdfs:label "a Java method" .
+	 
+:Field
+	a rdfs:Class ;
+	rdfs:label "a Java field or variable" .
+	 
+:package
+    a rdf:Property ;
+    rdfs:label "a Java package" .
+
+:constructor
+    a rdf:Property ;
+    rdfs:label "a property referring to a Constructor method for a Class" .
+    
+:method
+    a rdf:Property ;
+    rdfs:label "a property referring to a method for a Class, Interface or Enum" .
+    
+:argument
+    a rdf:Property ;
+    rdfs:label "a property referring to an argument provided to a method" .
+    
+:type
+    a rdf:Property ;
+    rdfs:label "a property referring to the Java type" .
+
+:typeParameter
+    a rdf:Property ;
+    rdfs:label "a property referring to the parameters provided to bound a Generic type" .
+
+:super
+    a rdf:Property ;
+    rdfs:label "a property referring to a types Supertype" .
+
+:extends
+    a rdf:Property ;
+    rdfs:label "a property referring to the Java type that the subject inherits behaviour from" .
+
+:implements
+    a rdf:Property ;
+    rdfs:label "a property referring to the Interfaces a type adheres to" .
+
+:returns
+    a rdf:Property ;
+    rdfs:label "a property referring to return type of a method" .
+
+:throws
+    a rdf:Property ;
+    rdfs:label "a property referring to a Java type that is thrown as the result of an exception" .
+
+:dimension
+    a rdf:Property ;
+    rdfs:label "a property referring to declared size a collection. This does not represent a concept explicitly in the Java language" .
+
+:innerClassOf
+    a rdf:Property ;
+    rdfs:label "a property referring to an enclosing type" .
+    
+:field
+    a rdf:Property ;
+    rdfs:label "a property referring to a field. aka variable or property" .
+    
+:isAbstract
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the type is marked Abstract" .
+    
+:isStatic
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the subject is Static. Eg a static method" .
+    
+:isFinal
+	a rdf:Property ;
+    rdfs:label "a boolean property indicating it is marked Final." .
+
+:isTransient
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the subject is marked transient" .
+    
+:isVolatile
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the subject marked volatile" .
+    
+:isSerializable
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the subject is serializable" .   
+    
+:isNative
+    a rdf:Property ;
+    rdfs:label "a boolean property indicating if the subject is native" .  
+    
+:lineNumber
+    a rdf:Property ;
+    rdfs:label "a property indicating the line number in the source code file where the declaration can be found. This does not represent a concept explicitly in the Java language" .
+     
+:imports
+    a rdf:Property ;
+    rdfs:label "a property referring to an import. This property is under reconsideration. Imports in Java are considered an extraneous detail not necessary for documentation. We consider otherwise." .
+         
+:access
+    a rdf:Property ;
+    rdfs:label "a property indicating if the Access constraints on a subject" .
+
+:isSynchronized
+    a rdf:Property ;
+    rdfs:label "a property indicating if a method is thread protected (Synchronized)" .
+    
+:hasAnnotation
+    a rdf:Property ;
+    rdfs:label "a property referring to a related Annotation type" .
+    
+:typeVariable
+    a rdf:Property ;
+    rdfs:label "a property referring to a type variable for Generic declarations" .
+    
+:returnTypeParameter
+    a rdf:Property ;
+    rdfs:label "a property referring to the return type of Java method" .
+
+ 
