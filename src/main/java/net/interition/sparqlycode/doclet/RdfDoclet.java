@@ -10,6 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import net.interition.sparlycode.model.ISCO;
 import net.interition.sparlycode.model.JAVAO;
@@ -26,6 +28,8 @@ import com.sun.tools.doclets.internal.toolkit.Configuration;
 import com.sun.tools.doclets.internal.toolkit.util.ClassTree;
 
 public class RdfDoclet extends AbstractDoclet {
+
+	private final Log log = LogFactory.getLog(RdfDoclet.class);
 
 	public ConfigurationImpl configuration;
 
@@ -61,21 +65,22 @@ public class RdfDoclet extends AbstractDoclet {
 			Map<String, String> options = readOptions(root.options());
 			String fileName = (options.get("file") == null) ? RdfDoclet.fileNameDefault
 					: options.get("file");
-			
+
 			doclet.setFileName(fileName);
 
 			String baseUri = (options.get("baseuri") == null) ? RdfDoclet.baseUriDefault
 					: options.get("baseuri");
-			
+
 			doclet.setBaseUri(baseUri);
-			
-			//change the URI schema of baseUri to file Uri if we are certain it is a http scheme based Uri
-			if(baseUri.startsWith("http:")) {
+
+			// base file uri on baseUri if http schema else make the same as
+			// baseUri
+			if (baseUri.startsWith("http:")) {
 				doclet.setFileUri(baseUri.replaceFirst("http:", "file:"));
 			} else {
 				doclet.setFileUri(baseUri);
 			}
-			
+
 			return doclet.start(doclet, root);
 
 		} finally {
@@ -88,6 +93,7 @@ public class RdfDoclet extends AbstractDoclet {
 	protected void generateClassFiles(ClassDoc[] arr, ClassTree classtree) {
 
 		Arrays.sort(arr);
+
 		for (int i = 0; i < arr.length; i++) {
 			// skipping over things that are not wanted
 			if (!(configuration.isGeneratedDoc(arr[i]) && arr[i].isIncluded())) {
@@ -96,13 +102,11 @@ public class RdfDoclet extends AbstractDoclet {
 
 			ClassDoc curr = arr[i];
 
-			Resource typeUri = model.createResource(baseUri
-					+ curr.qualifiedName().replace(".", "/"));
-			
+			Resource typeUri = createHttpResource(curr.qualifiedName());
+
 			// if there is no containing class create a file reference
 			if (curr.containingClass() == null) {
-				Resource fileResource = model.createResource(fileUri
-						+ curr.qualifiedName().replace(".", "/") + ".java");
+				Resource fileResource = createFileResource(curr.qualifiedName());
 				typeUri.addProperty(ISCO.file, fileResource);
 			}
 
@@ -118,8 +122,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// create basic metadata
 			typeUri.addProperty(RDFS.label, curr.name());
-			typeUri.addProperty(JAVAO.package_, curr.containingPackage()
-					.name());
+			typeUri.addProperty(JAVAO.package_, curr.containingPackage().name());
 
 			// add a line number reference
 			typeUri.addProperty(JAVAO.lineNumber,
@@ -147,9 +150,8 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// if inner class then create relationship
 			if (curr.containingClass() != null) {
-				Resource containingClazz = model.createResource(baseUri
-						+ curr.containingClass().qualifiedName()
-								.replace(".", "/"));
+				Resource containingClazz = createHttpResource(curr
+						.containingClass().qualifiedName());
 				typeUri.addProperty(JAVAO.innerClassOf, containingClazz);
 			}
 
@@ -168,24 +170,24 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// handle super classes
 			if (curr.superclass() != null) {
-				Resource superClazz = model.createResource(baseUri
-						+ curr.superclass().qualifiedName().replace(".", "/"));
+				Resource superClazz = createHttpResource(curr.superclass()
+						.qualifiedName());
 				typeUri.addProperty(JAVAO.extends_, superClazz);
 			}
 
 			// handle implemented interfaces
 			for (Type implementedInterface : curr.interfaceTypes()) {
-				Resource interfaceResource = model.createResource(baseUri
-						+ implementedInterface.qualifiedTypeName().replace(".",
-								"/"));
+				Resource interfaceResource = model
+						.createResource(implementedInterface
+								.qualifiedTypeName());
 				typeUri.addProperty(JAVAO.implements_, interfaceResource);
 			}
 
 			// what can we do with annotations ?
 			for (AnnotationDesc desc : curr.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
-				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
+				Resource annotationTypeUri = createHttpResource(a
+						.qualifiedTypeName());
 				typeUri.addProperty(JAVAO.hasAnnotation, annotationTypeUri);
 			}
 
@@ -203,14 +205,14 @@ public class RdfDoclet extends AbstractDoclet {
 		for (FieldDoc field : _class.fields()) {
 
 			// the field type
-			Resource fieldTypeResource = model.createResource(baseUri
-					+ field.type().qualifiedTypeName().replace(".", "/"));
+			Resource fieldTypeResource = createHttpResource(field.type()
+					.qualifiedTypeName());
 
 			// the line it is on .. used subsequently
 			int line = field.position().line();
 
-			Resource fieldResource = model.createResource(baseUri
-					+ field.qualifiedName().replace(".", "/") + "#" + line);
+			Resource fieldResource = createHttpResource(field.qualifiedName()
+					+ "#" + line);
 
 			fieldResource.addProperty(RDF.type, JAVAO.Field);
 
@@ -224,13 +226,14 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// assign a label
 			fieldResource.addProperty(RDFS.label, field.name());
-			
-			//is field an array, add dimensions ?
-			int dimension = arrayDimension(field.type().dimension()) ;
-			
-			//System.out.println(_class.name() + " : " + field.name() + " : " + field.type().dimension() + " : " + dimension );
-			
-			if( dimension > 0) { 
+
+			// is field an array, add dimensions ?
+			int dimension = arrayDimension(field.type().dimension());
+
+			// System.out.println(_class.name() + " : " + field.name() + " : " +
+			// field.type().dimension() + " : " + dimension );
+
+			if (dimension > 0) {
 				fieldResource.addProperty(JAVAO.dimension,
 						model.createTypedLiteral(dimension));
 			}
@@ -258,8 +261,8 @@ public class RdfDoclet extends AbstractDoclet {
 			// what can we do with annotations ?
 			for (AnnotationDesc desc : field.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
-				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
+				Resource annotationTypeUri = createHttpResource(a
+						.qualifiedTypeName());
 				fieldResource.addProperty(JAVAO.hasAnnotation,
 						annotationTypeUri);
 			}
@@ -291,8 +294,7 @@ public class RdfDoclet extends AbstractDoclet {
 		PackageDoc[] packages = curr.importedPackages();
 
 		for (PackageDoc p : packages) {
-			Resource packageUri = model.createResource(baseUri
-					+ p.name().replace(".", "/"));
+			Resource packageUri = createHttpResource(p.name());
 
 			classOrIntUri.addProperty(JAVAO.imports, packageUri);
 		}
@@ -321,8 +323,8 @@ public class RdfDoclet extends AbstractDoclet {
 			// get the line number as it will be used a couple of times
 			int line = method.position().line();
 
-			Resource methodUri = model.createResource(baseUri
-					+ method.qualifiedName().replace(".", "/") + "#" + line);
+			Resource methodUri = createHttpResource(method.qualifiedName()
+					+ "#" + line);
 
 			// moved typing and class relationship to here so we can handle
 			// constructors as well
@@ -376,8 +378,8 @@ public class RdfDoclet extends AbstractDoclet {
 
 			// throws any types ?
 			for (Type t : method.thrownExceptionTypes()) {
-				Resource thrownTypeUri = model.createResource(baseUri
-						+ t.qualifiedTypeName().replace(".", "/"));
+				Resource thrownTypeUri = createHttpResource(t
+						.qualifiedTypeName());
 
 				methodUri.addProperty(JAVAO.throws_, thrownTypeUri);
 
@@ -386,10 +388,9 @@ public class RdfDoclet extends AbstractDoclet {
 			// what can we do with annotations ?
 			for (AnnotationDesc desc : method.annotations()) {
 				AnnotationTypeDoc a = desc.annotationType();
-				Resource annotationTypeUri = model.createResource(baseUri
-						+ a.qualifiedTypeName().replace(".", "/"));
-				methodUri
-						.addProperty(JAVAO.hasAnnotation, annotationTypeUri);
+				Resource annotationTypeUri = createHttpResource(a
+						.qualifiedTypeName());
+				methodUri.addProperty(JAVAO.hasAnnotation, annotationTypeUri);
 			}
 
 			// create a label for the method
@@ -417,76 +418,96 @@ public class RdfDoclet extends AbstractDoclet {
 	}
 
 	private void argumentsToRdf(ExecutableMemberDoc method, Resource methodUri) {
-		// The javadoc API is a bit confusing, calling arguments parameters, watch out.
+		/**
+		 * The javadoc API is a bit confusing, calling arguments parameters and
+		 * stuff so watch out.
+		 */
 
 		for (Parameter argument : method.parameters()) {
 
-			Resource argumentTypeUri = model.createResource(baseUri
-					+ argument.type().qualifiedTypeName().replace(".", "/"));
-			
+			Resource argumentTypeUri = createHttpResource(argument.type()
+					.qualifiedTypeName());
+
 			Resource node = model.createResource();
 
 			// warning that type will be null if it is not a Parameterised Type
 			ParameterizedType type = argument.type().asParameterizedType();
 			if (type instanceof ParameterizedType) {
-				
-				node.addProperty(JAVAO.type, argumentTypeUri)
-						.addProperty(JAVAO.typeParameter,
-								parameterizedTypesToRdf(type));
-				
-				methodUri.addProperty(JAVAO.argument,node);
-				
+
+				node.addProperty(JAVAO.type, argumentTypeUri).addProperty(
+						JAVAO.typeParameter, parameterizedTypesToRdf(type));
+
+				methodUri.addProperty(JAVAO.argument, node);
+
 			} else {
 				// an ordinary type I hope
-	
-				node.addProperty(JAVAO.type, argumentTypeUri)
-						.addProperty(RDFS.label, argument.name());
-				
-				methodUri.addProperty(JAVAO.argument, node );
+
+				node.addProperty(JAVAO.type, argumentTypeUri).addProperty(
+						RDFS.label, argument.name());
+
+				methodUri.addProperty(JAVAO.argument, node);
 			}
-			
+
 			// if an array (not sure what this will mean to a parameterised type
-			int dimension = arrayDimension(argument.type().dimension()) ;
-			
-			if( dimension > 0) { 
+			int dimension = arrayDimension(argument.type().dimension());
+
+			if (dimension > 0) {
 				node.addProperty(JAVAO.dimension,
 						model.createTypedLiteral(dimension));
 			}
-			
+
 		}
 	}
 
 	private void returnTypesToRdf(MethodDoc method, Resource methodUri) {
 
-		Resource returnTypeUri = model.createResource(baseUri
-				+ method.returnType().qualifiedTypeName().replace(".", "/"));
-		
+		Resource returnTypeUri = null;
+
 		// if it is a parameterised type ...
 		ParameterizedType type = method.returnType().asParameterizedType();
-		
-		Resource node = model.createResource();
+
+		Resource resource = model.createResource();
 
 		if (type instanceof ParameterizedType) {
 			// the generic type info needs to be appended here with addProperty
-			node.addProperty(JAVAO.type, returnTypeUri)
-					.addProperty(JAVAO.typeParameter,
-							parameterizedTypesToRdf(type));
-			methodUri.addProperty(JAVAO.returns,node);
+
+			returnTypeUri = createHttpResource(method.returnType()
+					.qualifiedTypeName());
+
+			log.debug("method parameterized return type: "
+					+ returnTypeUri.toString());
+
+			Resource parameterizedTypeForRdf = parameterizedTypesToRdf(type);
+
+			resource.addProperty(JAVAO.type, returnTypeUri).addProperty(
+					JAVAO.typeParameter, parameterizedTypeForRdf);
+
+			methodUri.addProperty(JAVAO.returns, resource);
 
 		} else {
 			// simple non generic type
-			node.addProperty(JAVAO.type, returnTypeUri);
+
+			// COD-353 remove < and > from to address occurrence of <any>
+			// todo: we need to understand the generics better and improve the
+			// whole process
+			returnTypeUri = createHttpResource(method.returnType()
+					.qualifiedTypeName());
+
+			log.debug("method non parameterized return type: "
+					+ returnTypeUri.toString());
+
+			resource.addProperty(JAVAO.type, returnTypeUri);
 		}
-		
-		//if it is an array add dimension property
-		int dimension = arrayDimension(method.returnType().dimension()) ;
-		
-		if( dimension > 0) { 
-			node.addProperty(JAVAO.dimension,
+
+		// if it is an array add dimension property
+		int dimension = arrayDimension(method.returnType().dimension());
+
+		if (dimension > 0) {
+			resource.addProperty(JAVAO.dimension,
 					model.createTypedLiteral(dimension));
 		}
-		
-		methodUri.addProperty(JAVAO.returns,node);
+
+		methodUri.addProperty(JAVAO.returns, resource);
 
 	}
 
@@ -505,18 +526,29 @@ public class RdfDoclet extends AbstractDoclet {
 		Resource typeArguments = model.createResource();
 
 		for (Type t : parameterizedType.typeArguments()) {
-			
+
 			if (t.asTypeVariable() != null) {
+
+				log.debug("parameterized type t.asTypeVariable(): "
+						+ t.qualifiedTypeName());
+
 				Resource typeArgument = model.createResource();
 				typeArgument.addProperty(RDFS.label, t.typeName());
 				typeArguments.addProperty(JAVAO.argument, typeArgument);
 
+				// looks like typeArgument property assignment was overlooked
+				typeArgument.addProperty(JAVAO.argument,
+						createHttpResource(t.qualifiedTypeName()));
+
 				// don't understand what bounds means at the moment so just
 				// binding the name of the type variable eg T
-				// TODO: looked like a duplicate property so I took out 
-				//typeArgument.addProperty(RDFS.label, t.simpleTypeName());
+				// TODO: looked like a duplicate property so I took out
+				// typeArgument.addProperty(RDFS.label, t.simpleTypeName());
 
 			} else if (t.asWildcardType() != null) {
+
+				log.debug("parameterized type t.asWildcardType() "
+						+ t.qualifiedTypeName());
 
 				Resource typeArgument = model.createResource();
 				typeArgument.addProperty(RDFS.label, t.typeName());
@@ -524,42 +556,52 @@ public class RdfDoclet extends AbstractDoclet {
 
 				for (Type _bound : t.asWildcardType().extendsBounds()) {
 					// bound could be processed recursively
-					typeArgument.addProperty(
-							JAVAO.extends_,
-							model.createResource(baseUri
-									+ _bound.qualifiedTypeName().replace(".",
-											"/")));
+					typeArgument.addProperty(JAVAO.extends_,
+							createHttpResource(_bound.qualifiedTypeName()));
 				}
 
 				for (Type _super : t.asWildcardType().superBounds()) {
 					// _super can be processed recursively
-					typeArgument.addProperty(
-							JAVAO.super_,
-							model.createResource(baseUri
-									+ _super.qualifiedTypeName().replace(".",
-											"/")));
+					typeArgument.addProperty(JAVAO.super_,
+							createHttpResource(_super.qualifiedTypeName()));
 				}
 
 			} else if (t.asParameterizedType() != null) {
+
+				log.debug("parameterized type t.asParameterizedType() "
+						+ t.qualifiedTypeName());
 				// this is a recursive bit because types can also be
 				// parameterised
 				// ignore for now
 				// t.asParameterizedType()
 			} else {
-				
+
+				log.debug("parameterized type not recognised, defaulting "
+						+ t.qualifiedTypeName());
+
 				Resource typeArgument = model.createResource();
 				typeArgument.addProperty(RDFS.label, t.typeName());
 				typeArguments.addProperty(JAVAO.argument, typeArgument);
-				
-				typeArgument.addProperty(
-						JAVAO.argument,
-						model.createResource(baseUri
-								+ t.qualifiedTypeName().replace(".", "/")));
+
+				typeArgument.addProperty(JAVAO.argument,
+						createHttpResource(t.qualifiedTypeName()));
 			}
 
 		}
 
 		return typeArguments;
+
+	}
+
+	private Resource createHttpResource(String name) {
+
+		return model.createResource(baseUri
+				+ name.replace(".", "/").replaceAll("<|>", ""));
+	}
+
+	private Resource createFileResource(String name) {
+
+		return model.createResource(fileUri + name.replace(".", "/") + ".java");
 
 	}
 
@@ -610,7 +652,7 @@ public class RdfDoclet extends AbstractDoclet {
 		}
 		return 0;
 	}
-	
+
 	/*
 	 * Convert string dimension like [][] into an int dimension
 	 */
