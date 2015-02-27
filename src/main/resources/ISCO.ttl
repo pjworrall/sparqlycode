@@ -13,7 +13,7 @@ This is a draft Ontology for concepts that didn't seem to exist elsewhere. All f
 
 
 :File
-	 a rdf:Type ;
+	 a rdfs:Class ;
 	 rdfs:label "a Type of File on a computer file system" .
 	 
 :file
@@ -35,3 +35,5 @@ This is a draft Ontology for concepts that didn't seem to exist elsewhere. All f
 :fileLocation
     a rdf:Property ;
     rdfs:label "a property referring to a string literal representation of the folder or directory where a file can be found on a computer file system" .
+
+    

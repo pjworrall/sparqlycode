@@ -7,7 +7,7 @@
 	<version>0.0.4-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
-	<!-- to use me mvn net.interition:sparqlycode-maven-plugin:0.0.1-SNAPSHOT:sparqlycode -->
+	<!-- to use me mvn net.interition:sparqlycode-maven-plugin:M.Mn.p-SNAPSHOT:sparqlycode -->
 
 	<name>sparqlycode-maven-plugin Maven Plugin</name>
 
