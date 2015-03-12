@@ -74,6 +74,155 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>generate-model-sources</id>
+			<build>
+				<plugins>
+					<!-- To run the Jena schema generator for the PROV model -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>add-source</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>add-source</goal>
+								</goals>
+								<configuration>
+									<sources>
+										<source>${basedir}/generated-sources/java</source>
+									</sources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<!-- To run the Jena schema generator for the PROV model -->
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>1.3.2</version>
+						<executions>
+							<execution>
+								<id>provo-model-generation</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>jena.schemagen</mainClass>
+									<!-- had to put this in to stop a warning coming up -->
+									<killAfter>-1</killAfter>
+									<!-- there is a problem with this command line arg decleration, 
+										if you reformat the XML it gets mucked up, watch out! -->
+									<commandlineArgs>
+										<![CDATA[-i ${basedir}/src/main/resources/ISCO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n ISCO]]>
+									</commandlineArgs>
+								</configuration>
+							</execution>
+							<execution>
+								<id>gito-model-generation</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>jena.schemagen</mainClass>
+									<!-- had to put this in to stop a warning coming up -->
+									<killAfter>-1</killAfter>
+									<!-- there is a problem with this command line arg decleration, 
+										if you reformat the XML it gets mucked up, watch out! -->
+									<commandlineArgs>
+										<![CDATA[-i ${basedir}/src/main/resources/JAVAO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n JAVAO]]>
+									</commandlineArgs>
+								</configuration>
+							</execution>
+
+							<!-- This plugin is to run a Riot check before doing anything else 
+								<execution> <id>RDFValidator</id> <phase>generate-sources</phase> <goals> 
+								<goal>java</goal> </goals> <configuration> <includePluginDependencies>true</includePluginDependencies> 
+								<mainClass>net.interition.sparqlycode.testsuite.ValidityChecker</mainClass> 
+								</configuration> </execution> -->
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.apache.jena</groupId>
+								<artifactId>apache-jena-libs</artifactId>
+								<type>pom</type>
+								<version>2.12.0</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>publish-gito-sccs-kb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.interition</groupId>
+						<artifactId>screpo-maven-plugin</artifactId>
+						<version>0.0.7-SNAPSHOT</version>
+						<executions>
+							<execution>
+								<!-- this binding should be the default on the mojo but it does not 
+									seem to work so we are hard binding it -->
+								<id>gito-sccs-publish</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>screpo</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<message>SCCS Projects own GITO SCCS KB Generation</message>
+							<outputfile>gito4git.ttl</outputfile>
+							<startTag>refs/tags/v0.0.3</startTag>
+							<endTag>refs/tags/v0.0.2</endTag>
+							<ontology>GITO</ontology>
+							<identifier>sccs.git</identifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>publish-provo-sccs-kb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>net.interition</groupId>
+						<artifactId>screpo-maven-plugin</artifactId>
+						<version>0.0.7-SNAPSHOT</version>
+						<executions>
+							<!-- this binding should be the default on the mojo but it does not 
+								seem to work so we are hard binding it -->
+							<execution>
+								<id>provo-sccs-publish</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>screpo</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<message>SCCS Projects own PROVO SCCS KB Generation</message>
+							<outputfile>provo4git.ttl</outputfile>
+							<startTag>refs/tags/v0.0.3</startTag>
+							<endTag>refs/tags/v0.0.2</endTag>
+							<ontology>PROVO</ontology>
+							<identifier>sccs.git</identifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -128,66 +277,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- To run the Jena schema generator for the PROV model -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.9.1</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/java</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.3.2</version>
-				<executions>
-					<execution>
-						<id>model-generation</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>jena.schemagen</mainClass>
-							<!-- had to put this in to stop a warning coming up -->
-							<killAfter>-1</killAfter>
-							<!-- there is a problem with this command line arg decleration, if 
-								you reformat the XML it gets mucked up, watch out! -->
-							<commandlineArgs>
-								-i ${basedir}/src/main/resources/JAVAO.ttl --owl --inference -e TTL --package net.interition.sparlycode.model -o ${basedir}/generated-sources/java -n JAVAO
-							</commandlineArgs>
-						</configuration>
-					</execution>
-
-					<!-- This plugin is to run a Riot check before doing anything else <execution> 
-						<id>RDFValidator</id> <phase>generate-sources</phase> <goals> <goal>java</goal> 
-						</goals> <configuration> <includePluginDependencies>true</includePluginDependencies> 
-						<mainClass>net.interition.sparqlycode.testsuite.ValidityChecker</mainClass> 
-						</configuration> </execution> -->
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.jena</groupId>
-						<artifactId>apache-jena-libs</artifactId>
-						<type>pom</type>
-						<version>2.12.0</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<!-- End of plugins for Jena schema generator for the PROV model -->
 		</plugins>
 		<!-- Above maven-dependepcy-plugin gives a validation error in m2e. To 
 			fix that, add the plugin management step below. Per: http://stackoverflow.com/a/12109018 -->
