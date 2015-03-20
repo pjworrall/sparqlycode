@@ -57,7 +57,7 @@ public class RdfDoclet extends AbstractDoclet {
 
 		// obviously this needs to be resolved against build information
 		System.out
-				.println("Sparqlycode v 0.0.4-SNAPSHOT . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
+				.println("Sparqlycode v 0.0.4 . (C) copyright 2014 Interition Limited. All Rights Reserved. ");
 
 		try {
 			RdfDoclet doclet = new RdfDoclet();
