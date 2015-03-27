@@ -11,6 +11,9 @@
 This is a draft Ontology for concepts that didn't seem to exist elsewhere. All feedback is welcome."""@en ;
     rdfs:label "Interition Sparqlycode Orphan Concepts"@en  .
 
+:MavenProject
+         a rdfs:Class ;
+         rdfs:label "a Maven project object model (POM)" .
 
 :File
 	 a rdfs:Class ;
